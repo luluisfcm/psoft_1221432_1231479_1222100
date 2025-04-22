@@ -16,6 +16,7 @@ class Administrator {
   +searchPatients(name|email|phone): List<Patient>
   +scheduleAppointment(): Appointment
   +viewAppointment(id): Appointment
+  +viewAppointmentRecord(id): AppointmentRecord
   +generateStatistics(): Report
 }
 
@@ -36,10 +37,11 @@ class Patient {
   +id: UUID
   +name: String
   +email: String
+  +morada: String
   +dob: Date
   +phone: String
   +insuranceInfo: String
-  +healthConcerns: String[]
+  +healthConcerns: String
   +photo: String
   +dataConsent: Boolean
   +register(): Patient
