@@ -1,0 +1,51 @@
+@startuml
+title Bootstrap System Administrators - Sequence Diagram com Activation Boxes
+
+actor "System Owner" as Owner
+
+participant "Bootstrap UI" as UI
+participant "Validator"
+participant "User Manager" as UserMgr
+participant "User Database" as DB
+participant "Audit Logger" as Logger
+
+== Bootstrap Process ==
+
+Owner -> UI: Start bootstrap
+activate UI
+
+UI -> Owner: Prompt for credentials
+Owner -> UI: Enter username and password
+
+UI -> Validator: Validate credentials
+activate Validator
+
+alt Credentials invalid
+    Validator --> UI: Return error
+    deactivate Validator
+    UI -> Owner: Show validation error
+    deactivate UI
+else Credentials valid
+    Validator --> UI: Validation OK
+    deactivate Validator
+
+    UI -> UserMgr: Create admin user
+    activate UserMgr
+
+    UserMgr -> DB: Store credentials (hashed)
+    activate DB
+    DB --> UserMgr: Confirm storage
+    deactivate DB
+
+    UserMgr -> Logger: Log creation event
+    activate Logger
+    Logger --> UserMgr: Log success
+    deactivate Logger
+
+    deactivate UserMgr
+
+    UI -> Owner: Show success message
+    deactivate UI
+end
+
+@enduml
