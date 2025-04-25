@@ -9,6 +9,6 @@ public class Main {
     private AuditLogger auditLogger;
 
     void BootStrapService() {
-         
+
     }
 }
