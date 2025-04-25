@@ -1,29 +1,29 @@
 package org.example;
 
-public class User {
+
+class User {
+
+
     private String username;
-    private String passwordHash;
+    private String password;
     private Role role;
 
-    public User(String username, String passwordHash, Role role) {
+    public User(String username, String password, Role role) {
         this.username = username;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.role = role;
     }
 
-    public Role getRole() {
-        return role;
+    public String getUsername() { return username; }
+    public Role getRole() { return role; }
+}
+
+    enum Role {
+        ADMIN, USER
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    class PasswordPolicy {
+        public static boolean isValid(String password) {
+        return password != null && password.length() >= 8;
     }
 }
