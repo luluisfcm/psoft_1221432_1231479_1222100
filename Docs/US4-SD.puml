@@ -1,0 +1,16 @@
+@startuml
+actor "Admin ou Paciente" as User
+participant "UI: View Physician" as UI
+participant "Backend API" as API
+database "Database" as DB
+
+== Visualizar Detalhes do Médico ==
+
+User -> UI : Solicita visualizar médico (informa ID)
+UI -> API : GET /physicians/{id}
+API -> DB : SELECT * FROM Physicians WHERE id = {id}
+DB --> API : Retorna dados do médico
+API --> UI : Retorna detalhes do médico
+UI -> User : Exibe informações (nome, especialidade, contato, horário)
+
+@enduml
