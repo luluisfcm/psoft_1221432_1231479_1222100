@@ -1,7 +1,7 @@
-package org.example;
+package org.example.domain;
 
 
-class User {
+public class User {
 
 
     private String username;
@@ -18,12 +18,3 @@ class User {
     public Role getRole() { return role; }
 }
 
-    enum Role {
-        ADMIN, USER
-    }
-
-    class PasswordPolicy {
-        public static boolean isValid(String password) {
-        return password != null && password.length() >= 8;
-    }
-}

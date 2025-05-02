@@ -1,15 +1,11 @@
-package org.example;
+package org.example.repository;
+
+import org.example.domain.Specialization;
 
 import java.util.ArrayList;
 import java.util.List;
 
-interface SpecializationRepository {
-    void save(Specialization specialization);
-    boolean existsAny();
-    List<Specialization> findAll();
-}
-
-class InMemorySpecializationRepository implements SpecializationRepository {
+public class InMemorySpecializationRepository implements SpecializationRepository {
     private final List<Specialization> specializations = new ArrayList<>();
 
     @Override
