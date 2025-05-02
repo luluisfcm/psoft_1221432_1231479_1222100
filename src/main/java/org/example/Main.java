@@ -1,5 +1,13 @@
 package org.example;
 
+import org.example.audit.AuditLogger;
+import org.example.audit.ConsoleAuditLogger;
+import org.example.security.BootStrapService;
+import org.example.security.PasswordEncoder;
+import org.example.repository.*;
+import org.example.security.SimplePasswordEncoder;
+import org.example.service.SystemSetup;
+
 public class Main {
     public static void main(String[] args) {
         UserRepository userRepository = new InMemoryUserRepository();

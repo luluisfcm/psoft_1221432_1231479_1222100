@@ -1,17 +1,12 @@
-package org.example;
+package org.example.repository;
+
+import org.example.domain.Department;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public interface DepartmentRepository {
-    void save(Department department);
-    boolean existsAny();
-    Department findById(UUID id);
-    List<Department> findAll();
-}
-
-class InMemoryDepartmentRepository implements DepartmentRepository {
+public class InMemoryDepartmentRepository implements DepartmentRepository {
     private final List<Department> departments = new ArrayList<>();
 
     @Override
