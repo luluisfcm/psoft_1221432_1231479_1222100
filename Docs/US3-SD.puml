@@ -1,19 +1,55 @@
+
+
+
+
 @startuml
-actor Admin
-participant "UI: Register Form" as UI
-participant "Backend API" as API
-database "Database" as DB
+title Register Physician - Sequence Diagram com Activation Boxes
 
-== Registrar Médico ==
+actor "Administrator" as Admin
 
-Admin -> UI : Abre formulário de registro
-UI -> Admin : Exibe campos: Nome, Especialidade, Contato, Horário
+participant "Admin UI" as UI
+participant "Validator"
+participant "Physician Manager" as PhysMgr
+participant "Physician Database" as DB
+participant "Audit Logger" as Logger
 
-Admin -> UI : Preenche e envia formulário
-UI -> API : POST /physicians {dados do médico}
-API -> DB : INSERT INTO Physicians (nome, especialidade, contato, horario)
-DB --> API : Confirma inserção
-API --> UI : Resposta de sucesso
-UI -> Admin : Exibe confirmação de registro
+== Physician Registration Process ==
+
+Admin -> UI: Open registration form
+activate UI
+
+UI -> Admin: Prompt for physician details
+Admin -> UI: Enter name, specialty, contact, hours
+
+UI -> Validator: Validate input data
+activate Validator
+
+alt Invalid data
+    Validator --> UI: Return validation errors
+    deactivate Validator
+    UI -> Admin: Show input error messages
+    deactivate UI
+else Valid data
+    Validator --> UI: Data OK
+    deactivate Validator
+
+    UI -> PhysMgr: Create physician record
+    activate PhysMgr
+
+    PhysMgr -> DB: Store physician data
+    activate DB
+    DB --> PhysMgr: Confirm storage
+    deactivate DB
+
+    PhysMgr -> Logger: Log registration event
+    activate Logger
+    Logger --> PhysMgr: Log success
+    deactivate Logger
+
+    deactivate PhysMgr
+
+    UI -> Admin: Show success confirmation
+    deactivate UI
+end
 
 @enduml
