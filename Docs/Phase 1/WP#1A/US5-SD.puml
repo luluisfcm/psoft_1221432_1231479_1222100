@@ -1,0 +1,16 @@
+@startuml
+actor Paciente
+participant "UI: Search Form" as UI
+participant "Backend API" as API
+database "Database" as DB
+
+== Pesquisar Médicos ==
+
+Paciente -> UI : Digita nome ou especialidade
+UI -> API : GET /physicians?search=termo
+API -> DB : SELECT * FROM Physicians WHERE nome LIKE '%termo%' OR especialidade LIKE '%termo%'
+DB --> API : Retorna lista de médicos
+API --> UI : Retorna resultados da busca
+UI -> Paciente : Exibe lista de médicos correspondentes
+
+@enduml

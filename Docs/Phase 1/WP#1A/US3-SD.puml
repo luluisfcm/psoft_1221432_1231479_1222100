@@ -1,0 +1,19 @@
+@startuml
+actor Admin
+participant "UI: Register Form" as UI
+participant "Backend API" as API
+database "Database" as DB
+
+== Registrar Médico ==
+
+Admin -> UI : Abre formulário de registro
+UI -> Admin : Exibe campos: Nome, Especialidade, Contato, Horário
+
+Admin -> UI : Preenche e envia formulário
+UI -> API : POST /physicians {dados do médico}
+API -> DB : INSERT INTO Physicians (nome, especialidade, contato, horario)
+DB --> API : Confirma inserção
+API --> UI : Resposta de sucesso
+UI -> Admin : Exibe confirmação de registro
+
+@enduml
