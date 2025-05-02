@@ -2,20 +2,22 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
-        // Instanciando as dependências
         UserRepository userRepository = new InMemoryUserRepository();
         PasswordEncoder passwordEncoder = new SimplePasswordEncoder();
         AuditLogger auditLogger = new ConsoleAuditLogger();
+        DepartmentRepository departmentRepository = new InMemoryDepartmentRepository();
+        SpecializationRepository specializationRepository = new InMemorySpecializationRepository();
 
-        // Criando o serviço e injetando as dependências
         BootStrapService bootStrapService = new BootStrapService();
         bootStrapService.BootstrapService(userRepository, passwordEncoder, auditLogger);
 
-        // Inicializando o admin
+        SystemSetup systemSetup = new SystemSetup(bootStrapService, departmentRepository, specializationRepository);
+
         try {
-            bootStrapService.initializeAdmin("admin", "StrongPassword123");
+            systemSetup.bootstrapAdmins("admin", "StrongPassword123");
+            systemSetup.bootstrapDepartments();
         } catch (Exception e) {
-            System.out.println("Erro ao inicializar admin: " + e.getMessage());
+            System.out.println("Erro no setup: " + e.getMessage());
         }
     }
 }
