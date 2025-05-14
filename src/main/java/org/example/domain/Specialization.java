@@ -3,17 +3,24 @@ package org.example.domain;
 import java.util.UUID;
 
 public class Specialization {
-    private UUID id;
-    private String name;
-    private UUID departmentId;
+    private final UUID id;
+    private final String name;
 
-    public Specialization(String name, UUID departmentId) {
-        this.id = UUID.randomUUID();
+    public Specialization(String name, UUID id) {
         this.name = name;
-        this.departmentId = departmentId;
+        this.id = id;
     }
 
-    public UUID getId() { return id; }
-    public String getName() { return name; }
-    public UUID getDepartmentId() { return departmentId; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (ID: " + id + ")";
+    }
 }
