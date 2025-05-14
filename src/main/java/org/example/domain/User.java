@@ -8,7 +8,7 @@ public class User {
     private String password;
     private Role role;
 
-    // ⚠️ Construtor vazio necessário para desserialização do JSON
+
     public User() {
     }
 
