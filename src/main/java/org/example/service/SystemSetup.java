@@ -4,7 +4,7 @@ import org.example.domain.Department;
 import org.example.domain.Specialization;
 import org.example.repository.DepartmentRepository;
 import org.example.repository.SpecializationRepository;
-import org.example.security.BootStrapService;
+import org.example.bootstrapping.BootStrapService;
 
 public class SystemSetup {
     private final BootStrapService bootStrapService;

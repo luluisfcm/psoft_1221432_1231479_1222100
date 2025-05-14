@@ -1,10 +1,11 @@
-package org.example.security;
+package org.example.bootstrapping;
 
 import org.example.audit.AuditLogger;
 import org.example.domain.PasswordPolicy;
 import org.example.domain.Role;
 import org.example.domain.User;
 import org.example.repository.UserRepository;
+import org.example.security.PasswordEncoder;
 
 public class BootStrapService {
     private UserRepository userRepository;
