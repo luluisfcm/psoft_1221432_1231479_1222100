@@ -9,4 +9,6 @@ public interface PhysicianRepository {
     void save(Physician physician);
     Physician findById(UUID id);
     List<Physician> findAll();
+    List<Physician> findByName(String name);
+    List<Physician> findBySpecialization(String specializationName);
 }
