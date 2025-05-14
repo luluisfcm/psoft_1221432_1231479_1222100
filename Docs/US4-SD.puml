@@ -1,16 +1,33 @@
 @startuml
-actor "Admin ou Paciente" as User
-participant "UI: View Physician" as UI
-participant "Backend API" as API
-database "Database" as DB
+actor Administrator
+actor Patient
+participant "PhysicianConsoleController" as Controller
+participant "PhysicianRepository" as Repository
 
-== Visualizar Detalhes do Médico ==
+== Consulta de detalhes de um Physician por ID ==
 
-User -> UI : Solicita visualizar médico (informa ID)
-UI -> API : GET /physicians/{id}
-API -> DB : SELECT * FROM Physicians WHERE id = {id}
-DB --> API : Retorna dados do médico
-API --> UI : Retorna detalhes do médico
-UI -> User : Exibe informações (nome, especialidade, contato, horário)
+Administrator -> Controller : run()
+activate Controller
 
+Administrator -> Controller : select option "2"
+Controller -> Administrator : prompt for physician ID
+Administrator -> Controller : enter ID
+
+Controller -> Controller : parse UUID
+alt ID válido
+    Controller -> Repository : findById(UUID)
+    activate Repository
+    Repository --> Controller : Physician (ou null)
+    deactivate Repository
+
+    alt Physician encontrado
+        Controller -> Administrator : exibe detalhes do Physician
+    else Physician não encontrado
+        Controller -> Administrator : "Physician não encontrado"
+    end
+else ID inválido
+    Controller -> Administrator : "Formato de ID inválido"
+end
+
+deactivate Controller
 @enduml
