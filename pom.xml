@@ -54,6 +54,9 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+
+
+
         <!-- Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,6 +74,7 @@
 
     <build>
         <plugins>
+
             <!-- Plugin Spring Boot para empacotar e correr a app -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
