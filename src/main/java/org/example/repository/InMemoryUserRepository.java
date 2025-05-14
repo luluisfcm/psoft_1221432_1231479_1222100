@@ -1,10 +1,9 @@
-package org.example;
+package org.example.repository;
 
-public interface UserRepository {
-    boolean existsAnyAdmin();
-    void save(User user);
-}
-class InMemoryUserRepository implements UserRepository {
+import org.example.domain.Role;
+import org.example.domain.User;
+
+public class InMemoryUserRepository implements UserRepository {
     private boolean adminExists = false;
 
     @Override
