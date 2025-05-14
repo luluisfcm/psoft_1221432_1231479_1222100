@@ -29,4 +29,18 @@ public class InMemoryUserRepository implements UserRepository {
         return users.stream().anyMatch(u -> u.getRole() == Role.ADMIN);
     }
 }
+//    @Override
+//    public Optional<User> findById(UUID id) {
+//        return Optional.empty();
+//    }
+//
+//    @Override
+//    public List<User> findAllByRole(String role) {
+//        return List.of();
+//    }
+//
+//    @Override
+//    public List<User> findAll() {
+//        return List.of();
+//    }
 

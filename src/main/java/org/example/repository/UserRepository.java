@@ -12,7 +12,7 @@ public interface UserRepository {
     void save(User user);
     Optional<User> findByUsername(String username);
 
-    Optional<User> findById(UUID id);
-    List<User> findAllByRole(String role);
-    List<User> findAll();
+//    Optional<User> findById(UUID id);
+//    List<User> findAllByRole(String role);
+//    List<User> findAll();
 }
