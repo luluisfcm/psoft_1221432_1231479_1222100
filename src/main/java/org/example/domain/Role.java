@@ -1,5 +1,8 @@
 package org.example.domain;
 
 public enum Role {
-        ADMIN, USER
-    }
+    ADMIN,
+    USER,
+    PATIENT,
+    PHYSICIAN
+}

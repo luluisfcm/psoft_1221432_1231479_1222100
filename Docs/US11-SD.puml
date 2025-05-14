@@ -1,0 +1,16 @@
+@startuml
+actor Administrator
+participant "AppointmentController" as Controller
+participant "AppointmentService" as Service
+participant "PatientRepository" as PatientRepo
+participant "PhysicianRepository" as PhysicianRepo
+participant "AppointmentRepository" as AppointmentRepo
+
+Administrator -> Controller : scheduleAppointment(patientId, physicianId, date, time, type)
+Controller -> Service : scheduleAppointment(patientId, physicianId, date, time, type)
+Service -> PatientRepo : findById(patientId)
+Service -> PhysicianRepo : findById(physicianId)
+Service -> AppointmentRepo : save(appointment)
+Service --> Controller : appointmentDto
+Controller --> Administrator : confirmation
+@enduml
