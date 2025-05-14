@@ -21,15 +21,15 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(admin);
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().authenticated()
-//                )
-//                .httpBasic(); // apenas autenticação via terminal/Postman
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated()
+                )
+               .httpBasic(); // apenas autenticação via terminal/Postman
+        return http.build();
+   }
 }
 
