@@ -1,10 +1,12 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
+import org.example.auth.api.CreateUserRequest;
 import org.example.domain.PasswordPolicy;
-import org.example.domain.Role;
 import org.example.domain.User;
 import org.example.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,19 +14,22 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController() {
-        this.userRepository = new org.example.repository.InMemoryUserRepository(); // Usa a versão in-memory
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody User user) {
-        if (!PasswordPolicy.isValid(user.getPassword())) {
-            return ResponseEntity.badRequest().body("Password must be at least 8 characters long.");
-        }
-
+    public ResponseEntity<?> create(@RequestBody @Valid CreateUserRequest request){
+        User user = new User(
+                request.getUsername(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getRole()
+        );
         userRepository.save(user);
-        return ResponseEntity.ok("User created: " + user.getUsername());
+        return null;
     }
 
 }

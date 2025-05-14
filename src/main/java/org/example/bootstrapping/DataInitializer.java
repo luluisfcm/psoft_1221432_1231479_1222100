@@ -5,6 +5,12 @@ import org.example.domain.*;
 import org.example.repository.*;
 import org.springframework.stereotype.Component;
 
+import org.example.domain.Physician;
+import org.example.repository.PhysicianRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import java.util.UUID;
 
 @Component
@@ -28,14 +34,14 @@ public class DataInitializer {
             departmentRepo.save(new Department("Cardiology"));
             departmentRepo.save(new Department("Neurology"));
             departmentRepo.save(new Department("Pediatrics"));
-            System.out.println("✔ Departamentos carregados.");
+            System.out.println("Departamentos carregados.");
         }
 
         if (!specializationRepo.existsAny()) {
             specializationRepo.save(new Specialization("Pediatric Cardiology", UUID.randomUUID()));
             specializationRepo.save(new Specialization("Neurosurgery", UUID.randomUUID()));
             specializationRepo.save(new Specialization("Endocrinology", UUID.randomUUID()));
-            System.out.println("✔ Especializações carregadas.");
+            System.out.println("Especializações carregadas.");
         }
 
         // Criar paciente
@@ -66,5 +72,23 @@ public class DataInitializer {
         );
         appointmentRepository.save(appt);
         System.out.println("✔ Marcação default criada entre maria e dr.joana.");
+    }
+
+    @Bean
+    CommandLineRunner initDatabase(PhysicianRepository physicianRepository) {
+        return args -> {
+            if (physicianRepository.count() == 0) {
+                Physician defaultPhysician = new Physician();
+                defaultPhysician.setName("Dr. João Silva");
+                defaultPhysician.setSpecialty("Cardiologia");
+                defaultPhysician.setEmail("joao.silva@clinic.pt");
+                defaultPhysician.setPhone("912345678");
+                defaultPhysician.setWorkingHours("Mon-Fri 08:00-16:00");
+
+                physicianRepository.save(defaultPhysician);
+
+                System.out.println("Physician por defeito criado: " + defaultPhysician.getName());
+            }
+        };
     }
 }

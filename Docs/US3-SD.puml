@@ -1,55 +1,39 @@
 
 
 
-
 @startuml
-title Register Physician - Sequence Diagram com Activation Boxes
+actor Administrator
+participant "PhysicianConsoleController" as Controller
+participant "PhysicianRegistrationService" as Service
+participant "PhysicianRepository" as Repository
+participant "Specialization" as Specialization
 
-actor "Administrator" as Admin
+== Registro de um novo Physician ==
 
-participant "Admin UI" as UI
-participant "Validator"
-participant "Physician Manager" as PhysMgr
-participant "Physician Database" as DB
-participant "Audit Logger" as Logger
+Administrator -> Controller : run()
+activate Controller
 
-== Physician Registration Process ==
+Administrator -> Controller : select option "1"
+Controller -> Administrator : prompt for name, contact, hours, specialization
+Administrator -> Controller : provide data
 
-Admin -> UI: Open registration form
-activate UI
+Controller -> Specialization : new Specialization(specName, UUID)
+activate Specialization
+Specialization --> Controller : Specialization instance
+deactivate Specialization
 
-UI -> Admin: Prompt for physician details
-Admin -> UI: Enter name, specialty, contact, hours
+Controller -> Service : register(name, contact, hours, specialization)
+activate Service
 
-UI -> Validator: Validate input data
-activate Validator
+Service -> Repository : save(new Physician)
+activate Repository
+Repository --> Service : saved Physician
+deactivate Repository
 
-alt Invalid data
-    Validator --> UI: Return validation errors
-    deactivate Validator
-    UI -> Admin: Show input error messages
-    deactivate UI
-else Valid data
-    Validator --> UI: Data OK
-    deactivate Validator
+Service --> Controller : void
+deactivate Service
 
-    UI -> PhysMgr: Create physician record
-    activate PhysMgr
+Controller -> Administrator : Physician registrado com sucesso.
 
-    PhysMgr -> DB: Store physician data
-    activate DB
-    DB --> PhysMgr: Confirm storage
-    deactivate DB
-
-    PhysMgr -> Logger: Log registration event
-    activate Logger
-    Logger --> PhysMgr: Log success
-    deactivate Logger
-
-    deactivate PhysMgr
-
-    UI -> Admin: Show success confirmation
-    deactivate UI
-end
-
+deactivate Controller
 @enduml

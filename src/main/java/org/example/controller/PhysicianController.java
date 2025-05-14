@@ -1,49 +1,44 @@
 package org.example.controller;
 
-import org.example.domain.Role;
-import org.example.ApplicationData;
-import org.example.domain.User;
-import org.example.repository.UserRepository;
+import org.example.domain.Physician;
+import org.example.service.PhysicianService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/physicians")
+@RequestMapping("/api/physicians")
 public class PhysicianController {
 
-    private final UserRepository userRepository;
+    private final PhysicianService service;
 
-    public PhysicianController() {
-        this.userRepository = ApplicationData.userRepository;
-
+    public PhysicianController(PhysicianService service) {
+        this.service = service;
     }
 
-    // Registar médico
     @PostMapping
-    public ResponseEntity<?> register(@RequestBody User user) {
-        if (user.getRole() != Role.PHYSICIAN) {
-            return ResponseEntity.badRequest().body("Only role PHYSICIAN is allowed here.");
-        }
-        user.setId(UUID.randomUUID());
-        userRepository.save(user);
-        return ResponseEntity.ok("Physician registered: " + user.getUsername());
+    public ResponseEntity<Physician> createPhysician(@RequestBody Physician physician) {
+        Physician saved = service.save(physician);
+        return ResponseEntity.status(201).body(saved);
     }
 
-    // Listar todos os médicos
+    @GetMapping("/{id}")
+    public ResponseEntity<Physician> getPhysicianById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
-        return ResponseEntity.ok(userRepository.findAllByRole("PHYSICIAN"));
+    public ResponseEntity<List<Physician>> listAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
-    // Ver médico autenticado
-    @GetMapping("/me")
-    public ResponseEntity<User> getLoggedPhysician(Authentication auth) {
-        Optional<User> user = userRepository.findByUsername(auth.getName());
-        return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/search")
+    public ResponseEntity<List<Physician>> searchPhysicians(@RequestParam String keyword) {
+        List<Physician> result = service.searchByNameOrSpecialty(keyword);
+        return ResponseEntity.ok(result);
     }
+
 }

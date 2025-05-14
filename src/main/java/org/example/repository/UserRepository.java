@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import java.util.Optional;
+
 public interface UserRepository {
     boolean existsAnyAdmin();
     void save(User user);
     Optional<User> findByUsername(String username);
+
     Optional<User> findById(UUID id);
     List<User> findAllByRole(String role);
     List<User> findAll();
