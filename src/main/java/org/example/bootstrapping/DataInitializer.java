@@ -14,8 +14,14 @@ import java.util.UUID;
 @Component
 public class DataInitializer {
 
-    private final DepartmentRepository departmentRepo = new InMemoryDepartmentRepository();
-    private final SpecializationRepository specializationRepo = new InMemorySpecializationRepository();
+    private DepartmentRepository departmentRepo = new InMemoryDepartmentRepository();
+    private SpecializationRepository specializationRepo = new InMemorySpecializationRepository();
+
+    public DataInitializer(DepartmentRepository departmentRepo,
+                           SpecializationRepository specializationRepo) {
+        this.departmentRepo = departmentRepo;
+        this.specializationRepo = specializationRepo;
+    }
 
     @PostConstruct
     public void init() {

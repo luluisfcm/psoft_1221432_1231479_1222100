@@ -1,11 +1,12 @@
 package org.example.repository;
 
 import org.example.domain.Department;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+@Component
 public class InMemoryDepartmentRepository implements DepartmentRepository {
     private final List<Department> departments = new ArrayList<>();
 
