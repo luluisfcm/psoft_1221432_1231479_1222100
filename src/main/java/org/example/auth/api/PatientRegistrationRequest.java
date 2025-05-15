@@ -1,11 +1,8 @@
-package org.example.domain;
+package org.example.auth.api;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public class Patient {
-
-    private UUID id;
+public class PatientRegistrationRequest {
     private String name;
     private String email;
     private LocalDate dateOfBirth;
@@ -14,10 +11,6 @@ public class Patient {
     private boolean dataConsent;
 
     // Getters
-    public UUID getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -43,10 +36,6 @@ public class Patient {
     }
 
     // Setters
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
