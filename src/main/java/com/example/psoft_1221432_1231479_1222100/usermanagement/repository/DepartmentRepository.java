@@ -1,0 +1,12 @@
+package com.example.psoft_1221432_1231479_1222100.usermanagement.repository;
+
+import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Department;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface DepartmentRepository extends JpaRepository<Department, String> {
+    boolean existsByCode(String code);
+
+    Optional<Department> findByCode(String code);
+}
