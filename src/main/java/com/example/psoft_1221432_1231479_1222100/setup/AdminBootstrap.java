@@ -15,19 +15,21 @@ public class AdminBootstrap implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private int adminCounter = 1; // contador para gerar IDs: ADM01, ADM02...
+    private int adminCounter = 1;
 
     @Override
     public void run(String... args) {
-        createAdminIfNotExists("luis", "1230773");
+        createAdminIfNotExists("luis", "1221432");
+        createAdminIfNotExists("francisco", "1222100");
+        createAdminIfNotExists("jose", "1231479");
     }
 
-    private void createAdminIfNotExists(String email, String rawPassword) {
-        userRepository.findByUsername(email).orElseGet(() -> {
+    private void createAdminIfNotExists(String username, String rawPassword) {
+        userRepository.findByUsername(username).orElseGet(() -> {
             User user = new User();
             String adminId = generateNextAdminId();
             user.setId(adminId);
-            user.setUsername(email);
+            user.setUsername(username);
             user.setPassword(passwordEncoder.encode(rawPassword));
             user.setRole(Role.ADMIN);
             return userRepository.save(user);
@@ -35,7 +37,7 @@ public class AdminBootstrap implements CommandLineRunner {
     }
 
     private String generateNextAdminId() {
-        String id = String.format("ADM%02d", adminCounter);
+        String id = String.format("%02d", adminCounter);
         adminCounter++;
         return id;
     }

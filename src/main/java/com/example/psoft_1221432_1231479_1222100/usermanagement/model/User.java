@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "sysuser")
+@Table(name = "SYSTEMUSER")
 @Getter
 @Setter
 @NoArgsConstructor

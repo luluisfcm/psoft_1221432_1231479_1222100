@@ -22,15 +22,18 @@ public class DataBootstrap implements CommandLineRunner {
     }
 
     private void preloadDepartments() {
-        createDepartment("DEPAR1", "C", "Cardiology", "Heart care");
+        createDepartment("DEPAR1", "C", "Cardiology", "Diagnosis and treatment of heart conditions");
         createDepartment("DEPAR2", "P", "Pediatrics", "Medical care for children and adolescents");
-
-
+        createDepartment("DEPAR3", "O", "Orthopedics", "Treatment of bones, joints, and muscles");
+        createDepartment("DEPAR4", "D", "Dermatology", "Treatment of skin, hair, and nail disorders");
     }
 
 
     private void preloadSpecialties() {
-        createSpecialty("SPECIAL1", "Cardiology");
+        createSpecialty("SPCIAL1", "Cardiology");
+        createSpecialty("SPCIAL2", "Neurology");
+        createSpecialty("SPCIAL3", "Orthopedics");
+        createSpecialty("SPCIAL4", "Pediatrics");
     }
 
 

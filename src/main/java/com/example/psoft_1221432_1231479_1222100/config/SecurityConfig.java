@@ -13,12 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.SecretKey;
@@ -27,12 +23,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-    private static final String SECRET = "chave-super-secreta-para-dev-256bits-PCM";
+    private static final String SECRET = "KdlJ8tYnKUyRZsP2FbExMqXYv9UoEw5kU7N1RzWQbxI=";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -80,7 +77,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**", "/h2-console/**", "/api/patients/register").permitAll()
+                        .requestMatchers("/api/public/**", "/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -97,4 +94,6 @@ public class SecurityConfig {
 
 
 }
+
+
 
