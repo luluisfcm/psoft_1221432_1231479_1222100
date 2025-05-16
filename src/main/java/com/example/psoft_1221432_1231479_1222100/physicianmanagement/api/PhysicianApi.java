@@ -19,7 +19,7 @@ public class PhysicianApi {
 
     private final PhysicianService physicianService;
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<PhysicianIdResponse> register(
             @RequestBody @Valid RegisterPhysicianRequest request) {
         PhysicianIdResponse response = physicianService.register(request);

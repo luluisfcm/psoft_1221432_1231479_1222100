@@ -1,14 +1,18 @@
 package com.example.psoft_1221432_1231479_1222100.physicianmanagement.service;
 
+import com.example.psoft_1221432_1231479_1222100.physicianmanagement.dto.PhysicianDetailsAdminResponse;
+import com.example.psoft_1221432_1231479_1222100.physicianmanagement.dto.PhysicianDetailsPatientResponse;
 import com.example.psoft_1221432_1231479_1222100.physicianmanagement.dto.PhysicianIdResponse;
 import com.example.psoft_1221432_1231479_1222100.physicianmanagement.dto.RegisterPhysicianRequest;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Physician;
+import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Role;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Specialty;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.PhysicianRepository;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,4 +41,50 @@ public class PhysicianService {
                 .name(saved.getName())
                 .build();
     }
+
+    public Object getByIdForRole(String id, Role role) {
+        Physician physician = physicianRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Physician not found"));
+
+        if (role == Role.ADMIN) {
+            return PhysicianDetailsAdminResponse.builder()
+                    .id(physician.getId())
+                    .name(physician.getName())
+                    .specialty(physician.getSpecialty().getName())
+                    .contactInfo(physician.getContactInfo())
+                    .workingHours(physician.getWorkingHours())
+                    .workingDays(physician.getWorkingDays())
+                    .build();
+        } else {
+            return PhysicianDetailsPatientResponse.builder()
+                    .id(physician.getId())
+                    .name(physician.getName())
+                    .specialty(physician.getSpecialty().getName())
+                    .build();
+        }
+    }
+
+    public List<PhysicianDetailsPatientResponse> search(String name, String specialty) {
+        List<Physician> results;
+
+        if (name != null && specialty != null) {
+            results = physicianRepository.findByNameContainingIgnoreCaseAndSpecialty_NameContainingIgnoreCase(name, specialty);
+        } else if (name != null) {
+            results = physicianRepository.findByNameContainingIgnoreCase(name);
+        } else if (specialty != null) {
+            results = physicianRepository.findBySpecialty_NameContainingIgnoreCase(specialty);
+        } else {
+            results = physicianRepository.findAll();
+        }
+
+        return results.stream().map(p ->
+                PhysicianDetailsPatientResponse.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .specialty(p.getSpecialty().getName())
+                        .build()
+        ).toList();
+    }
+
+
 }

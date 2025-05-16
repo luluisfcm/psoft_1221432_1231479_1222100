@@ -1,12 +1,16 @@
 package com.example.psoft_1221432_1231479_1222100.setup;
 
 import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Department;
+import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Physician;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Specialty;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.DepartmentRepository;
 import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.SpecialtyRepository;
+import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.PhysicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -50,4 +54,5 @@ public class DataBootstrap implements CommandLineRunner {
             specialtyRepository.save(specialty);
         }
     }
+
 }
