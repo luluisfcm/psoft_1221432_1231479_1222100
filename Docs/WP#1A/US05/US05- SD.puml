@@ -1,0 +1,33 @@
+@startuml
+title US05 - SD - Search Physicians
+autoactivate on
+autonumber
+
+actor "Patient"
+participant ":controller:PhysicianQueryApi" as PhysicianQueryApi
+participant ":service:PhysicianService" as PhysicianService
+participant ":repo:PhysicianRepository" as PhysicianRepository
+
+activate Patient
+
+Patient -> PhysicianQueryApi : GET /api/physicians?name=&specialty=
+note right: Only accessible if role == PATIENT
+
+PhysicianQueryApi -> PhysicianService : search(name, specialty)
+
+alt name && specialty present
+    PhysicianService -> PhysicianRepository : findByNameContainingIgnoreCaseAndSpecialty_NameContainingIgnoreCase(name, specialty)
+else if name present
+    PhysicianService -> PhysicianRepository : findByNameContainingIgnoreCase(name)
+else if specialty present
+    PhysicianService -> PhysicianRepository : findBySpecialty_NameContainingIgnoreCase(specialty)
+else
+    PhysicianService -> PhysicianRepository : findAll()
+end
+
+PhysicianRepository --> PhysicianService : List<Physician>
+PhysicianService --> PhysicianQueryApi : List<PhysicianDetailsPatientResponse>
+PhysicianQueryApi --> Patient : 200 OK
+
+deactivate Patient
+@enduml

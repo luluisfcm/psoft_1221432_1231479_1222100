@@ -1,0 +1,14 @@
+@startuml
+title US05 - SSD: Search Physicians
+autoactivate on
+autonumber
+
+actor "Patient" as Patient
+participant ":RestAPI" as System
+
+activate Patient
+
+Patient -> System: GET /api/physicians?name=...&specialty=...
+System --> Patient: 200 OK (List<PhysicianDetailsPatientResponse>)
+
+@enduml

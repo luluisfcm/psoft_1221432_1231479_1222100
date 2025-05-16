@@ -1,0 +1,33 @@
+@startuml
+title US03 - SD - Register a Physician
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:PhysicianApi" as PhysicianApi
+participant ":service:PhysicianService" as PhysicianService
+participant ":repo:SpecialtyRepository" as SpecialtyRepository
+participant ":repo:PhysicianRepository" as PhysicianRepository
+participant ":mapper:PhysicianMapper" as PhysicianMapper
+
+activate Administrator
+
+Administrator -> PhysicianApi : POST /api/admin/physicians/register
+note right: @PreAuthorize("hasRole('ADMIN')")
+
+PhysicianApi -> PhysicianService : register(request)
+
+PhysicianService -> SpecialtyRepository : findById(request.specialtyId)
+SpecialtyRepository --> PhysicianService : Specialty
+
+PhysicianService -> PhysicianMapper : toEntity(request, specialty)
+PhysicianMapper --> PhysicianService : Physician
+
+PhysicianService -> PhysicianRepository : save(Physician)
+PhysicianRepository --> PhysicianService : Physician (with ID)
+
+PhysicianService --> PhysicianApi : PhysicianIdResponse
+PhysicianApi --> Administrator : 201 Created
+
+deactivate Administrator
+@enduml
