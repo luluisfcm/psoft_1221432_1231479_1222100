@@ -1,0 +1,30 @@
+@startuml
+title US04 - SD - View Physician Details
+autoactivate on
+autonumber
+
+actor "User (Admin or Patient)"
+participant ":controller:PhysicianQueryApi" as PhysicianQueryApi
+participant ":service:PhysicianService" as PhysicianService
+participant ":repo:PhysicianRepository" as PhysicianRepository
+participant ":model:Role" as Role
+
+activate "User (Admin or Patient)"
+
+"User (Admin or Patient)" -> PhysicianQueryApi : GET /api/physicians/{physicianId}
+PhysicianQueryApi -> Role : getCurrentUser().getRole()
+PhysicianQueryApi -> PhysicianService : getByIdForRole(physicianId, role)
+
+PhysicianService -> PhysicianRepository : findById(physicianId)
+PhysicianRepository --> PhysicianService : Physician
+
+alt role == ADMIN
+    PhysicianService --> PhysicianQueryApi : PhysicianDetailsAdminResponse
+else role == PATIENT
+    PhysicianService --> PhysicianQueryApi : PhysicianDetailsPatientResponse
+end
+
+PhysicianQueryApi --> "User (Admin or Patient)" : 200 OK
+
+deactivate "User (Admin or Patient)"
+@enduml
