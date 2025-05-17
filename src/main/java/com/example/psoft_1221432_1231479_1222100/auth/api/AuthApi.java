@@ -1,9 +1,9 @@
 package com.example.psoft_1221432_1231479_1222100.auth.api;
 import com.example.psoft_1221432_1231479_1222100.auth.dto.LoginResponse;
 import com.example.psoft_1221432_1231479_1222100.auth.services.AuthService;
-import com.example.psoft_1221432_1231479_1222100.usermanagement.dto.RegisterUserRequest;
-import com.example.psoft_1221432_1231479_1222100.usermanagement.dto.UserIdResponse;
-import com.example.psoft_1221432_1231479_1222100.usermanagement.service.UserService;
+import com.example.psoft_1221432_1231479_1222100.userManagement.dto.RegisterUserRequest;
+import com.example.psoft_1221432_1231479_1222100.userManagement.dto.UserIdResponse;
+import com.example.psoft_1221432_1231479_1222100.userManagement.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,8 +48,26 @@ public class AuthApi {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserIdResponse> register(@RequestBody @Valid RegisterUserRequest request) {
-        UserIdResponse response = userService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<LoginResponse> register(@RequestBody @Valid RegisterUserRequest request) {
+        // Regista o utilizador
+        userService.register(request);
+
+        // Autentica logo após registo
+        Authentication authentication = authService.authenticate(request.getUsername(), request.getPassword());
+
+        // Gera token
+        String token = authService.generateToken(authentication);
+
+        // Extrai roles
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                LoginResponse.builder()
+                        .token(token)
+                        .roles(roles)
+                        .build()
+        );
     }
 }

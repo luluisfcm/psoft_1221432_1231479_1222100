@@ -1,8 +1,8 @@
 package com.example.psoft_1221432_1231479_1222100.auth.api;
 
-import com.example.psoft_1221432_1231479_1222100.usermanagement.model.Role;
-import com.example.psoft_1221432_1231479_1222100.usermanagement.model.User;
-import com.example.psoft_1221432_1231479_1222100.usermanagement.repository.UserRepository;
+import com.example.psoft_1221432_1231479_1222100.userManagement.model.Role;
+import com.example.psoft_1221432_1231479_1222100.userManagement.model.User;
+import com.example.psoft_1221432_1231479_1222100.userManagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
