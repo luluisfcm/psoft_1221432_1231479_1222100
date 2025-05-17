@@ -1,11 +1,10 @@
 package com.example.psoft_1221432_1231479_1222100.appointmentManagement.services;
 
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentIdResponse;
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentUpdateRequest;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentViewResponse;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
-import com.example.psoft_1221432_1231479_1222100.userManagement.model.Appointment;
-import com.example.psoft_1221432_1231479_1222100.userManagement.model.Patient;
-import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
+import com.example.psoft_1221432_1231479_1222100.userManagement.model.*;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.AppointmentRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PatientRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PhysicianRepository;
@@ -118,5 +117,67 @@ public class AppointmentService {
                         .build())
                 .toList();
     }
+
+    public void updateAppointment(String appointmentId, AppointmentUpdateRequest request) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        appointment.update(request.getTime(), request.getDate(), request.getConsultationType());
+        appointmentRepository.save(appointment);
+    }
+
+    public void cancelAppointment(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        appointment.cancel();
+        appointmentRepository.save(appointment);
+    }
+
+    public AppointmentViewResponse updateAndReturn(String appointmentId, AppointmentUpdateRequest request) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        appointment.update(request.getTime(), request.getDate(), request.getConsultationType());
+        appointmentRepository.save(appointment);
+
+        return toViewResponse(appointment);
+    }
+
+    public AppointmentViewResponse cancelAndReturn(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        appointment.cancel();
+        appointmentRepository.save(appointment);
+
+        return toViewResponse(appointment);
+    }
+
+    private AppointmentViewResponse toViewResponse(Appointment a) {
+        return AppointmentViewResponse.builder()
+                .appointmentId(a.getAppointmentId())
+                .physicianName(a.getPhysician().getName())
+                .date(a.getDate().toString())
+                .time(a.getTime())
+                .consultationType(a.getConsultationType())
+                .status(a.getStatus())
+                .build();
+    }
+
+    public AppointmentViewResponse getAppointmentById(String id, User currentUser) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        // Se for paciente, só pode ver se for a própria consulta
+        if (currentUser.getRole() == Role.PATIENT &&
+                !appointment.getPatient().getId().equals(currentUser.getId())) {
+            throw new SecurityException("You are not authorized to view this appointment");
+        }
+
+        return toViewResponse(appointment);
+    }
+
+
 
 }
