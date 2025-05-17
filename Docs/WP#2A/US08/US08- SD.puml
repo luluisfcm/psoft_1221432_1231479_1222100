@@ -1,0 +1,23 @@
+@startuml
+title US08 - SD - View Patient Details
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:PatientApi" as PatientApi
+participant ":service:PatientService" as PatientService
+participant ":repo:PatientRepository" as PatientRepository
+
+activate Administrator
+
+Administrator -> PatientApi : GET /api/public/patients/{id}
+PatientApi -> PatientService : getById(id)
+
+PatientService -> PatientRepository : findById(id)
+PatientRepository --> PatientService : Patient
+
+PatientService --> PatientApi : PatientDetailsResponse
+PatientApi --> Administrator : 200 OK
+
+deactivate Administrator
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+title US09 - SD - Search Patients by Name
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:PatientQueryApi" as PatientQueryApi
+participant ":service:PatientService" as PatientService
+participant ":repo:PatientRepository" as PatientRepository
+
+activate Administrator
+
+Administrator -> PatientQueryApi : GET /api/admin/patients?name=...
+
+PatientQueryApi -> PatientService : searchByName(name)
+
+alt name is blank
+    PatientService -> PatientRepository : findAll()
+else
+    PatientService -> PatientRepository : findByNameContainingIgnoreCase(name)
+end
+
+PatientRepository --> PatientService : List<Patient>
+PatientService --> PatientQueryApi : List<PatientDetailsResponse>
+PatientQueryApi --> Administrator : 200 OK
+
+deactivate Administrator
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+title US08 - SSD: View Patient Details
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System: GET /api/public/patients/{patientId}
+System --> Admin: 200 OK (PatientDetailsResponse)
+
+@enduml
