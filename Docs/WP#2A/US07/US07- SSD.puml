@@ -1,0 +1,14 @@
+@startuml
+title US07 - SSD: Register Patient
+autoactivate on
+autonumber
+
+actor "Anonymous User" as User
+participant ":RestAPI" as System
+
+activate User
+
+User -> System: POST /api/public/patients/register
+System --> User: 201 Created (PatientIdResponse)
+
+@enduml

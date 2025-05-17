@@ -1,0 +1,14 @@
+@startuml
+title US09 - SSD: Search Patients by Name
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System: GET /api/admin/patients?name=...
+System --> Admin: 200 OK (List<PatientDetailsResponse>)
+
+@enduml
