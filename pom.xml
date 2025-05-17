@@ -12,10 +12,10 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>com.pcm.psoft</groupId>
-	<artifactId>pcmclinic-api</artifactId>
+	<groupId>com.psoft</groupId>
+	<artifactId>psoft-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>pcmclinic-api</name>
+	<name>psoft-api</name>
 	<description>Clinic management system with Spring Boot</description>
 
 	<properties>
