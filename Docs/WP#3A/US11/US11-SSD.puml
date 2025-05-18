@@ -1,0 +1,14 @@
+@startuml
+title US11 - SSD: Schedule Appointment
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System: POST /api/admin/appointments
+System --> Admin: 201 Created (AppointmentIdResponse)
+
+@enduml

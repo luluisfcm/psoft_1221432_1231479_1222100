@@ -1,0 +1,14 @@
+@startuml
+title US14 - SSD: View Appointment Details
+autoactivate on
+autonumber
+
+actor "Patient or Admin" as User
+participant ":RestAPI" as System
+
+activate User
+
+User -> System: GET /api/patient/appointments/{appointmentId}
+System --> User: 200 OK (AppointmentViewResponse)
+
+@enduml

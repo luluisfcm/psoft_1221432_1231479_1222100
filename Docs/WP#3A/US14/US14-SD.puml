@@ -1,0 +1,31 @@
+@startuml
+title US14 - SD - View Appointment Details
+autoactivate on
+autonumber
+
+actor "Patient or Admin"
+participant ":controller:AppointmentPatientApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+participant ":auth:AuthHelper" as AuthHelper
+
+activate "Patient or Admin"
+
+"Patient or Admin" -> AppointmentApi : GET /api/patient/appointments/{id}
+AppointmentApi -> AuthHelper : getCurrentUser()
+AuthHelper --> AppointmentApi : User
+
+AppointmentApi -> AppointmentService : getAppointmentById(id, user)
+AppointmentService -> AppointmentRepository : findById(id)
+AppointmentRepository --> AppointmentService : Appointment
+
+alt Patient is not owner
+    AppointmentService --> AppointmentApi : 403 Forbidden
+else
+    AppointmentService -> Appointment : toViewResponse()
+    AppointmentService --> AppointmentApi : AppointmentViewResponse
+    AppointmentApi --> "Patient or Admin" : 200 OK
+end
+
+deactivate "Patient or Admin"
+@enduml

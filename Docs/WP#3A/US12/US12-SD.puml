@@ -1,0 +1,21 @@
+@startuml
+title US12 - SD - View My Appointments
+autoactivate on
+autonumber
+
+actor "Patient"
+participant ":controller:AppointmentPatientApi" as AppointmentPatientApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+
+activate Patient
+
+Patient -> AppointmentPatientApi : GET /api/patient/appointments/by-patient/{patientId}
+AppointmentPatientApi -> AppointmentService : getAppointmentsForPatient(patientId)
+AppointmentService -> AppointmentRepository : findByPatient_Id(patientId)
+AppointmentRepository --> AppointmentService : List<Appointment>
+AppointmentService --> AppointmentPatientApi : List<AppointmentViewResponse>
+AppointmentPatientApi --> Patient : 200 OK
+
+deactivate Patient
+@enduml

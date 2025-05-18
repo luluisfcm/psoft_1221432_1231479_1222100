@@ -1,0 +1,34 @@
+@startuml
+title US11 - SD - Schedule Appointment
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:AppointmentApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+participant ":repo:PhysicianRepository" as PhysicianRepository
+participant ":repo:PatientRepository" as PatientRepository
+
+activate Administrator
+
+Administrator -> AppointmentApi : POST /api/admin/appointments
+AppointmentApi -> AppointmentService : schedule(request)
+
+AppointmentService -> AppointmentRepository : existsByPhysician_IdAndDateAndTime(physicianId, date, time)
+AppointmentRepository --> AppointmentService : boolean (slot available)
+
+AppointmentService -> PhysicianRepository : findById(physicianId)
+PhysicianRepository --> AppointmentService : Physician
+
+AppointmentService -> PatientRepository : findById(patientId)
+PatientRepository --> AppointmentService : Patient
+
+AppointmentService -> AppointmentRepository : save(appointment)
+AppointmentRepository --> AppointmentService : Appointment
+
+AppointmentService --> AppointmentApi : AppointmentIdResponse
+AppointmentApi --> Administrator : 201 Created
+
+deactivate Administrator
+@enduml

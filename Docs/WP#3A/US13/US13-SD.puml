@@ -1,0 +1,42 @@
+@startuml
+title US13 - SD - Update or Cancel Appointment
+autoactivate on
+autonumber
+
+actor "Patient or Admin"
+participant ":controller:AppointmentPatientApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+participant ":security:AuthHelper" as AuthHelper
+
+== Update Flow ==
+
+"Patient or Admin" -> AppointmentApi : PUT /api/patient/appointments/{id}
+AppointmentApi -> AuthHelper : isPatient(), isAdmin()
+AuthHelper --> AppointmentApi : true
+
+AppointmentApi -> AppointmentService : updateAndReturn(id, request)
+AppointmentService -> AppointmentRepository : findById(id)
+AppointmentRepository --> AppointmentService : Appointment
+
+AppointmentService -> Appointment : update(time, date, consultationType)
+AppointmentService -> AppointmentRepository : save(appointment)
+AppointmentService --> AppointmentApi : AppointmentViewResponse
+AppointmentApi --> "Patient or Admin" : 200 OK
+
+== Cancel Flow ==
+
+"Patient or Admin" -> AppointmentApi : DELETE /api/patient/appointments/{id}
+AppointmentApi -> AuthHelper : isPatient(), isAdmin()
+AuthHelper --> AppointmentApi : true
+
+AppointmentApi -> AppointmentService : cancelAndReturn(id)
+AppointmentService -> AppointmentRepository : findById(id)
+AppointmentRepository --> AppointmentService : Appointment
+
+AppointmentService -> Appointment : cancel()
+AppointmentService -> AppointmentRepository : save(appointment)
+AppointmentService --> AppointmentApi : AppointmentViewResponse
+AppointmentApi --> "Patient or Admin" : 200 OK
+
+@enduml
