@@ -3,23 +3,37 @@ package com.example.psoft_1221432_1231479_1222100.appointmentManagement.api;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentIdResponse;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.services.AppointmentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/appointments")
 @RequiredArgsConstructor
+@Tag(name = "Appointments", description = "Endpoints for scheduling appointments by administrators")
 public class AppointmentApi {
 
     private final AppointmentService appointmentService;
 
     @PostMapping
+    @Operation(
+            summary = "Schedule an appointment",
+            description = "Allows an administrator to schedule an appointment for a patient with a physician. Assumes physician availability.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Appointment scheduled successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+                    @ApiResponse(responseCode = "404", description = "Patient or Physician not found"),
+                    @ApiResponse(responseCode = "409", description = "Slot already booked"),
+                    @ApiResponse(responseCode = "403", description = "Access denied")
+            }
+    )
     public ResponseEntity<AppointmentIdResponse> schedule(
             @RequestBody @Valid ScheduleAppointmentRequest request) {
         AppointmentIdResponse response = appointmentService.schedule(request);
