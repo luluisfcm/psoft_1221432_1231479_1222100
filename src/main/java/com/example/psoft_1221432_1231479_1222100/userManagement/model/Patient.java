@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "PATIENT")
@@ -56,6 +57,6 @@ public class Patient {
         this.dataConsent = dataConsent;
     }
 
-    protected Patient() {
+    public Patient() {
     }
 }

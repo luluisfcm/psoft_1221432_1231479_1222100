@@ -1,8 +1,10 @@
 package com.example.psoft_1221432_1231479_1222100.physicianManagement.api;
 
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianIdResponse;
+import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianUpdateRequest;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.RegisterPhysicianRequest;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.service.PhysicianService;
+import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,5 +36,13 @@ public class PhysicianApi {
             @RequestBody @Valid RegisterPhysicianRequest request) {
         PhysicianIdResponse response = physicianService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Physician> updatePhysician(
+            @PathVariable String id,
+            @RequestBody PhysicianUpdateRequest request) {
+        Physician updated = physicianService.updatePhysician(id, request);
+        return ResponseEntity.ok(updated);
     }
 }

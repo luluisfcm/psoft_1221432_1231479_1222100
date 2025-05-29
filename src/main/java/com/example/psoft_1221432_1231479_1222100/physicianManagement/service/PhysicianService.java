@@ -1,9 +1,6 @@
 package com.example.psoft_1221432_1231479_1222100.physicianManagement.service;
 
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianDetailsAdminResponse;
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianDetailsPatientResponse;
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianIdResponse;
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.RegisterPhysicianRequest;
+import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.*;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Role;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Specialty;
@@ -86,5 +83,21 @@ public class PhysicianService {
         ).toList();
     }
 
+    public Physician updatePhysician(String id, PhysicianUpdateRequest request) {
+        Physician physician = physicianRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Physician not found"));
 
+        if (request.getName() != null) physician.setName(request.getName());
+        if (request.getContactInfo() != null) physician.setContactInfo(request.getContactInfo());
+        if (request.getWorkingDays() != null) physician.setWorkingDays(request.getWorkingDays());
+        if (request.getWorkingHours() != null) physician.setWorkingHours(request.getWorkingHours());
+
+        if (request.getSpecialtyId() != null) {
+            Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
+                    .orElseThrow(() -> new RuntimeException("Specialty not found"));
+            physician.setSpecialty(specialty);
+        }
+
+        return physicianRepository.save(physician);
+    }
 }

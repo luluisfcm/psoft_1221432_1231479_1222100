@@ -3,6 +3,8 @@ package com.example.psoft_1221432_1231479_1222100.userManagement.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "PHYSICIAN")
 @Getter
@@ -29,5 +31,13 @@ public class Physician {
 
     @Column
     private String workingHours;
+
+    public Physician(String id, String firstName, String contactInfo, String workingDays, String workingHours) {
+        this.id = id;
+        this.name = firstName;
+        this.contactInfo = contactInfo;
+        this.workingDays = workingDays;
+        this.workingHours = workingHours;
+    }
 }
 
