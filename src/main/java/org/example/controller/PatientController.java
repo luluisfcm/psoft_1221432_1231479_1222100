@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/public/patients")
 public class PatientController {
 
     private final UserRepository userRepository;
@@ -24,15 +25,13 @@ public class PatientController {
     }
 
     // 🟢 WP#2A — Registo anónimo de paciente
-    @PostMapping("/api/public/patients/register")
+    @PostMapping("/register")
     public ResponseEntity<?> registerAnonymous(@RequestBody @Valid RegisterPatientRequest request) {
         User patient = new User();
         patient.setId(UUID.randomUUID());
         patient.setUsername(request.getEmail());
-        patient.setPassword(""); // ou uma string simbólica
+        patient.setPassword(""); // pode ser vazio ou gerado
         patient.setRole(Role.PATIENT);
-
-        // poderias salvar os campos adicionais numa entidade Patient estendida
         userRepository.save(patient);
         return ResponseEntity.ok().body("Patient registered with ID: " + patient.getId());
     }
