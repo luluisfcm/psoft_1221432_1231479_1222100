@@ -61,20 +61,9 @@ class Appointment {
   +cancel(): void
 }
 
-class AppointmentRecord {
-  +recordId: UUID
-  +diagnosis: String
-  +treatment: String
-  +prescription: String
-  +createdAt: DateTime
-  +update(): void
-}
 
-class Report {
-  +generateMonthlyReport(): void
-  +topPhysicians(): List<Physician>
-  +averageAppointmentDuration(): Map
-}
+
+
 
 class SystemSetup {
   +bootstrapAdmins(): void
@@ -90,12 +79,8 @@ class Auth {
 Administrator --> Physician : manages >
 Administrator --> Patient : manages >
 Administrator --> Appointment : schedules >
-Administrator --> AppointmentRecord : views >
-Administrator --> Report : generates >
-Physician --> AppointmentRecord : creates/updates >
 Physician --> Appointment : participates >
 Patient --> Appointment : books/views >
-Patient --> AppointmentRecord : views >
 Patient --> Physician : searches >
 
 SystemSetup ..> Administrator
