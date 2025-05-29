@@ -1,0 +1,33 @@
+@startuml
+title US06 - SD - Update Physician
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:PhysicianApi" as PhysicianApi
+participant ":service:PhysicianService" as PhysicianService
+participant ":repo:PhysicianRepository" as PhysicianRepository
+participant ":repo:SpecialtyRepository" as SpecialtyRepository
+
+activate Administrator
+
+Administrator -> PhysicianApi : PUT /api/admin/physicians/{id}
+
+PhysicianApi -> PhysicianService : updatePhysician(id, request)
+
+PhysicianService -> PhysicianRepository : findById(id)
+PhysicianRepository --> PhysicianService : Physician
+
+alt request.specialtyId != null
+    PhysicianService -> SpecialtyRepository : findById(request.specialtyId)
+    SpecialtyRepository --> PhysicianService : Specialty
+end
+
+PhysicianService -> PhysicianRepository : save(updated Physician)
+PhysicianRepository --> PhysicianService : Physician
+
+PhysicianService --> PhysicianApi : Physician
+PhysicianApi --> Administrator : 200 OK (Physician)
+
+deactivate Administrator
+@enduml

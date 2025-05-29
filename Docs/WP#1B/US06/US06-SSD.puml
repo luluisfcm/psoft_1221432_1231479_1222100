@@ -1,0 +1,15 @@
+@startuml
+title US06-SSD: Update Physician
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System : PUT /api/admin/physicians/{id}
+System --> Admin : 200 OK (Updated Physician)
+
+@enduml
