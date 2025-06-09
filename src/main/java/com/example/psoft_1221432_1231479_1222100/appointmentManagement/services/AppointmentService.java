@@ -1,9 +1,6 @@
 package com.example.psoft_1221432_1231479_1222100.appointmentManagement.services;
 
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentIdResponse;
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentUpdateRequest;
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentViewResponse;
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.*;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.*;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.AppointmentRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PatientRepository;
@@ -17,6 +14,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +58,6 @@ public class AppointmentService {
         return new AppointmentIdResponse(appointment.getAppointmentId());
     }
 
-
     private void validateAppointmentTime(LocalDate date, String timeStr) {
         LocalTime time;
         try {
@@ -102,7 +99,6 @@ public class AppointmentService {
         LocalTime endTime = LocalTime.parse(end);
         return !time.isBefore(startTime) && time.isBefore(endTime);
     }
-
 
     public List<AppointmentViewResponse> getAppointmentsForPatient(String patientId) {
         return appointmentRepository.findByPatient_Id(patientId)
@@ -178,6 +174,24 @@ public class AppointmentService {
         return toViewResponse(appointment);
     }
 
+    public List<TopPhysicianResponse> getTop5Physicians() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+
+        return appointments.stream()
+                .collect(Collectors.groupingBy(
+                        Appointment::getPhysician,
+                        Collectors.counting()
+                ))
+                .entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                .limit(5)
+                .map(entry -> new TopPhysicianResponse(
+                        entry.getKey().getId(),
+                        entry.getKey().getName(),
+                        entry.getValue()
+                ))
+                .toList();
+    }
 
 
 }

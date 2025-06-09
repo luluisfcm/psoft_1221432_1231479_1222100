@@ -1,6 +1,7 @@
 package com.example.psoft_1221432_1231479_1222100.physicianManagement.api;
 
 import com.example.psoft_1221432_1231479_1222100.auth.api.AuthHelper;
+import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.AvailableSlotResponse;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianDetailsPatientResponse;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.service.PhysicianService;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Role;
@@ -60,5 +61,11 @@ public class PhysicianQueryApi {
         List<PhysicianDetailsPatientResponse> results = physicianService.search(name, specialty);
         return ResponseEntity.ok(results);
     }
-
+    @GetMapping("/{physicianId}/available-slots")
+    public ResponseEntity<AvailableSlotResponse> getAvailableSlots(@PathVariable String physicianId) {
+//        if (!authHelper.isPatient()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+        return ResponseEntity.ok(physicianService.getAvailableSlots(physicianId));
+    }
 }

@@ -2,6 +2,7 @@ package com.example.psoft_1221432_1231479_1222100.appointmentManagement.api;
 
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentIdResponse;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.TopPhysicianResponse;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.services.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/appointments")
@@ -38,5 +41,10 @@ public class AppointmentApi {
             @RequestBody @Valid ScheduleAppointmentRequest request) {
         AppointmentIdResponse response = appointmentService.schedule(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/top-physicians")
+    public ResponseEntity<List<TopPhysicianResponse>> getTopPhysicians() {
+        return ResponseEntity.ok(appointmentService.getTop5Physicians());
     }
 }

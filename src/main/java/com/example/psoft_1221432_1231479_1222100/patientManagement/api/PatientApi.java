@@ -1,8 +1,12 @@
 package com.example.psoft_1221432_1231479_1222100.patientManagement.api;
 
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentHistoryResponse;
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
+import com.example.psoft_1221432_1231479_1222100.auth.api.AuthHelper;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.PatientDetailsResponse;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.RegisterPatientRequest;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.PatientIdResponse;
+import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.UpdatePatientRequest;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,12 +19,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/public/patients")
 @RequiredArgsConstructor
 @Tag(name = "Gestão de Pacientes", description = "Endpoints públicos para registo e consulta de pacientes")
 public class PatientApi {
-
+    private final AuthHelper authHelper;
     private final PatientService patientService;
 
     @Operation(summary = "Registar novo paciente", description = "Regista um paciente anónimo e devolve o ID gerado.")
@@ -47,4 +53,32 @@ public class PatientApi {
         PatientDetailsResponse response = patientService.getById(id);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientDetailsResponse> updatePatient(
+//        if (!authHelper.isPatient()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+            @PathVariable String id,
+            @RequestBody UpdatePatientRequest request) {
+        return ResponseEntity.ok(patientService.update(id, request));
+    }
+    @PostMapping("/appointments")
+    public ResponseEntity<Void> scheduleAppointment(
+        @RequestBody @Valid ScheduleAppointmentRequest request) {
+        if (!authHelper.isPatient() && !authHelper.isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        patientService.scheduleAppointment(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    @GetMapping("/{id}/appointments")
+    public ResponseEntity<List<AppointmentHistoryResponse>> getHistory(@PathVariable String id) {
+        if (!authHelper.isPatient() && !authHelper.isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(patientService.getAppointmentHistory(id));
+    }
+
+
 }

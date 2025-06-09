@@ -1,24 +1,34 @@
 package com.example.psoft_1221432_1231479_1222100.physicianManagement.service;
 
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.*;
+import com.example.psoft_1221432_1231479_1222100.userManagement.model.Appointment;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Role;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Specialty;
+import com.example.psoft_1221432_1231479_1222100.userManagement.repository.AppointmentRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PhysicianRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PhysicianService {
 
+    @Autowired
     private final PhysicianRepository physicianRepository;
+    @Autowired
     private final SpecialtyRepository specialtyRepository;
-
+    @Autowired
+    private AppointmentRepository appointmentRepository; //
     public PhysicianIdResponse register(RegisterPhysicianRequest request) {
         Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
@@ -99,5 +109,79 @@ public class PhysicianService {
         }
 
         return physicianRepository.save(physician);
+    }
+
+    public AvailableSlotResponse getAvailableSlots(String physicianId) {
+        Physician physician = physicianRepository.findById(physicianId)
+                .orElseThrow(() -> new IllegalArgumentException("Physician not found"));
+
+        // Converte a string workingDays ("MON-FRI", "MONDAY,WEDNESDAY") para Set<DayOfWeek>
+        Set<DayOfWeek> workingDays = parseWorkingDays(physician.getWorkingDays());
+
+        // Parse horário: ex. "08:00-16:00"
+        String[] hours = physician.getWorkingHours().split("-");
+        LocalTime startHour = LocalTime.parse(hours[0]);
+        LocalTime endHour = LocalTime.parse(hours[1]);
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusWeeks(1);
+
+        // Gera todos os slots possíveis de 20 em 20 minutos
+        List<LocalDateTime> allSlots = new ArrayList<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            if (workingDays.contains(date.getDayOfWeek())) {
+                for (LocalTime time = startHour; time.isBefore(endHour); time = time.plusMinutes(20)) {
+                    allSlots.add(LocalDateTime.of(date, time));
+                }
+            }
+        }
+
+        // Obtém marcações existentes
+        List<Appointment> appointments = appointmentRepository.findByPhysicianIdAndDateBetween(
+                physicianId, startDate, endDate
+        );
+
+        Set<LocalDateTime> bookedSlots = appointments.stream()
+                .map(a -> LocalDateTime.of(a.getDate(), LocalTime.parse(a.getTime())))
+                .collect(Collectors.toSet());
+
+        // Filtra apenas os slots disponíveis
+        List<String> availableSlots = allSlots.stream()
+                .filter(slot -> !bookedSlots.contains(slot))
+                .map(LocalDateTime::toString)
+                .toList();
+
+        return AvailableSlotResponse.builder()
+                .physicianId(physicianId)
+                .workingDays(physician.getWorkingDays())  // continua como String
+                .workingHours(physician.getWorkingHours())
+                .availableSlots(availableSlots)
+                .build();
+    }
+
+    private Set<DayOfWeek> parseWorkingDays(String workingDaysRaw) {
+        Set<DayOfWeek> days = new HashSet<>();
+
+        if (workingDaysRaw == null || workingDaysRaw.isBlank()) return days;
+
+        for (String part : workingDaysRaw.toUpperCase().split(",")) {
+            part = part.trim();
+            switch (part) {
+                case "MON-FRI" -> days.addAll(List.of(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY
+                ));
+                case "SAT-SUN" -> days.addAll(List.of(
+                        DayOfWeek.SATURDAY,
+                        DayOfWeek.SUNDAY
+                ));
+                default -> days.add(DayOfWeek.valueOf(part));
+            }
+        }
+
+        return days;
     }
 }
