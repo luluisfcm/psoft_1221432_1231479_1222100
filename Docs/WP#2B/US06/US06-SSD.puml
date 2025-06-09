@@ -1,0 +1,13 @@
+@startuml
+title US06-SSD: Update Patient Personal Data
+
+autoactivate on
+autonumber
+
+actor "Patient" as Patient
+participant ":RestAPI" as System
+
+activate Patient
+Patient -> System: PUT /api/patient/profile
+System --> Patient: 200 OK
+@enduml

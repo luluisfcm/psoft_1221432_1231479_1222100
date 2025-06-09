@@ -1,0 +1,13 @@
+@startuml
+title USXX-SSD: View Top 5 Physicians
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+Admin -> System: GET /api/admin/appointments/top-physicians
+System --> Admin: 200 OK + List<TopPhysicianResponse>
+@enduml

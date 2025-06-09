@@ -1,0 +1,26 @@
+@startuml
+title US06-SD: Update Patient Personal Data
+
+autoactivate on
+autonumber
+
+actor "Patient"
+participant "PatientApi" as Controller
+participant "PatientService" as Service
+participant "PatientRepository" as Repo
+
+Patient -> Controller : PUT /api/patient/profile
+activate Controller
+
+Controller -> Service : updatePatient(updateRequest, authenticatedUserId)
+activate Service
+
+Service -> Repo : findById(authenticatedUserId)
+Repo --> Service : Patient
+
+Service -> Repo : save(updatedPatient)
+Repo --> Service : Patient
+
+Service --> Controller : 200 OK
+Controller --> Patient : Success Response
+@enduml

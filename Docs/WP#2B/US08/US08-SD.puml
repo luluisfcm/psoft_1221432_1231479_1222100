@@ -1,0 +1,29 @@
+@startuml
+title US08-SD: View Appointment History
+
+autoactivate on
+autonumber
+
+actor "Patient"
+participant "PatientApi" as Controller
+participant "PatientService" as Service
+participant "AppointmentRepository" as AppointmentRepo
+participant "PhysicianRepository" as PhysicianRepo
+
+Patient -> Controller : GET /api/patient/appointments/history
+activate Controller
+
+Controller -> Service : getAppointmentHistory(patientId)
+activate Service
+
+Service -> AppointmentRepo : findByPatientId(patientId)
+AppointmentRepo --> Service : List<Appointment>
+
+loop for each appointment
+  Service -> PhysicianRepo : findById(appointment.physicianId)
+  PhysicianRepo --> Service : Physician
+end
+
+Service --> Controller : List<AppointmentViewResponse>
+Controller --> Patient : 200 OK (List)
+@enduml

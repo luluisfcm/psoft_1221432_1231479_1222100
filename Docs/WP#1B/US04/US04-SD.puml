@@ -1,0 +1,26 @@
+@startuml
+title USXX-SD: View Top 5 Physicians by Appointments
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant "AppointmentController" as Controller
+participant "AppointmentService" as Service
+participant "AppointmentRepository" as Repo
+
+Admin -> Controller: GET /api/admin/appointments/top-physicians
+activate Controller
+
+Controller -> Service: getTop5Physicians()
+activate Service
+
+Service -> Repo: findAll()
+Repo --> Service: List<Appointment>
+
+Service --> Controller: List<TopPhysicianResponse>
+deactivate Service
+
+Controller --> Admin: 200 OK + JSON
+deactivate Controller
+@enduml

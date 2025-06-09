@@ -1,0 +1,31 @@
+@startuml
+title US07-SD: Schedule Appointment with Physician
+
+autoactivate on
+autonumber
+
+actor "Patient"
+participant "PatientApi" as Controller
+participant "PatientService" as Service
+participant "PhysicianRepository" as PhysicianRepo
+participant "AppointmentRepository" as AppointmentRepo
+participant "Appointment" as Appointment
+
+Patient -> Controller : POST /api/patient/appointments
+activate Controller
+
+Controller -> Service : scheduleAppointment(request, patientId)
+activate Service
+
+Service -> PhysicianRepo : findById(request.physicianId)
+PhysicianRepo --> Service : Physician
+
+Service -> AppointmentRepo : findConflicts(physicianId, date, time)
+AppointmentRepo --> Service : empty or conflict
+
+Service -> AppointmentRepo : save(new Appointment)
+AppointmentRepo --> Service : Appointment (with ID)
+
+Service --> Controller : AppointmentIdResponse
+Controller --> Patient : 201 Created
+@enduml

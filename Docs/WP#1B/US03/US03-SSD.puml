@@ -1,0 +1,15 @@
+@startuml
+title US03-SSD: View Available Appointment Slots
+
+autoactivate on
+autonumber
+
+actor "Patient" as Patient
+participant ":RestAPI" as System
+
+activate Patient
+
+Patient -> System: GET /api/patient/appointments/available/{physicianId}
+System --> Patient: 200 OK + AvailableSlotResponse
+
+@enduml

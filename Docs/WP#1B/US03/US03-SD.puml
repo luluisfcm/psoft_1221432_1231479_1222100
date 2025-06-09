@@ -1,0 +1,25 @@
+@startuml
+title US03-SD: View Available Appointment Slots
+
+autoactivate on
+autonumber
+
+actor "Patient"
+participant ":controller:AppointmentPatientApi"
+participant ":service:PhysicianService"
+participant ":repo:PhysicianRepository"
+participant ":repo:AppointmentRepository"
+
+Patient -> AppointmentPatientApi : GET /appointments/available/{physicianId}
+AppointmentPatientApi -> PhysicianService : getAvailableSlots(physicianId)
+
+PhysicianService -> PhysicianRepository : findById(physicianId)
+PhysicianRepository --> PhysicianService : Physician
+
+PhysicianService -> AppointmentRepository : findByPhysicianIdAndDateBetween(...)
+AppointmentRepository --> PhysicianService : List<Appointment>
+
+PhysicianService --> AppointmentPatientApi : AvailableSlotResponse
+AppointmentPatientApi --> Patient : 200 OK
+
+@enduml
