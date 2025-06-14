@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
@@ -253,4 +254,17 @@ public class AppointmentService {
                 .collect(Collectors.toList());
     }
 
+
+    public MonthlyReport generateMonthlyReport(int year, int month) {
+        YearMonth ym = YearMonth.of(year, month);
+        LocalDate start = ym.atDay(1);
+        LocalDate end = ym.atEndOfMonth();
+
+        long total = appointmentRepository.countByDateBetween(start, end);
+        long cancellations = appointmentRepository.countByStatusAndDateBetween("CANCELLED", start, end);
+        long reschedules = appointmentRepository.countByStatusAndDateBetween("RESCHEDULED", start, end);
+
+        String monthLabel = ym.format(DateTimeFormatter.ofPattern("yyyy-MM")); // Ou "MMMM yyyy" para "June 2025"
+        return new MonthlyReport(monthLabel, total, cancellations, reschedules);
+    }
 }

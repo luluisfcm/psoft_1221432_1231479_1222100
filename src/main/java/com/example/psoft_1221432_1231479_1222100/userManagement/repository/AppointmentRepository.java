@@ -15,12 +15,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     // Buscar consultas por paciente
     List<Appointment> findByPatient_Id(String patientId);
 
-    // Buscar consultas por médico
-    List<Appointment> findByPhysician_Id(String physicianId);
-
-    // Buscar por estado
-    List<Appointment> findByStatus(String status);
-
     boolean existsByPhysician_IdAndDateAndTime(String physicianId, LocalDate date, String time);
 
     @Query("SELECT a FROM Appointment a WHERE a.physician.id = :physicianId AND a.date BETWEEN :startDate AND :endDate")
@@ -35,4 +29,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     List<Appointment> findByStatusAndDateGreaterThanEqualOrderByDateAscTimeAsc(String status, LocalDate date);
 
     List<Appointment> findAllByStatus(String status);
+
+    long countByDateBetween(LocalDate start, LocalDate end);
+
+    // Total de RESCHEDULED no mês
+    long countByStatusAndDateBetween(String status, LocalDate start, LocalDate end);
+
 }

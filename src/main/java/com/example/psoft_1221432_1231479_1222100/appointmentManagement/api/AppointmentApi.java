@@ -61,4 +61,11 @@ public class AppointmentApi {
     public ResponseEntity<List<AppointmentAvgDuration>> getAvgAppointmentDurationPerPhysician() {
         return ResponseEntity.ok(appointmentService.getAverageDurationPerPhysician());
     }
+
+    @GetMapping("/monthly-report")
+    public MonthlyReport getMonthlyReport(
+            @RequestParam int year,
+            @RequestParam int month) {
+        return appointmentService.generateMonthlyReport(year, month);
+    }
 }

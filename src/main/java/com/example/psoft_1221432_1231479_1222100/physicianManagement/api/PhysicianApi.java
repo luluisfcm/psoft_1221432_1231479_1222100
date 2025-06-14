@@ -1,8 +1,6 @@
 package com.example.psoft_1221432_1231479_1222100.physicianManagement.api;
 
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianIdResponse;
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.PhysicianUpdateRequest;
-import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.RegisterPhysicianRequest;
+import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.*;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.service.PhysicianService;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/admin/physicians")
@@ -45,4 +44,17 @@ public class PhysicianApi {
         Physician updated = physicianService.updatePhysician(id, request);
         return ResponseEntity.ok(updated);
     }
+
+    @PostMapping("/{id}/photo")
+    public ResponseEntity<?> uploadPhoto(@PathVariable String id, @RequestParam("photo") MultipartFile photoFile) {
+        physicianService.uploadPhoto(id, photoFile);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/register-base64")
+    public ResponseEntity<Physician> registerWithPhotoBase64(
+            @RequestBody RegisterPhysicianBase64DTO dto) {
+        Physician physician = physicianService.registerWithPhotoBase64(dto);
+        return ResponseEntity.ok(physician);
+    }
+
 }
