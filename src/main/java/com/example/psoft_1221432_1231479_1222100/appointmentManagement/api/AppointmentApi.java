@@ -1,8 +1,6 @@
 package com.example.psoft_1221432_1231479_1222100.appointmentManagement.api;
 
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.AppointmentIdResponse;
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.ScheduleAppointmentRequest;
-import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.TopPhysicianResponse;
+import com.example.psoft_1221432_1231479_1222100.appointmentManagement.dto.*;
 import com.example.psoft_1221432_1231479_1222100.appointmentManagement.services.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,5 +44,21 @@ public class AppointmentApi {
     @GetMapping("/top-physicians")
     public ResponseEntity<List<TopPhysicianResponse>> getTopPhysicians() {
         return ResponseEntity.ok(appointmentService.getTop5Physicians());
+    }
+
+    @GetMapping("/admin/stats/appointments-by-age-group")
+    public ResponseEntity<List<AppointmentAgeGroupStats>> getStatsByAgeGroup() {
+        List<AppointmentAgeGroupStats> stats = appointmentService.getAppointmentStatsByAgeGroup();
+        return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/upcoming-appointments")
+    public ResponseEntity<List<UpcomingAppointment>> listUpcomingAppointments() {
+        return ResponseEntity.ok(appointmentService.getUpcomingAppointments());
+    }
+
+    @GetMapping("/avg-appointment-duration-per-physician")
+    public ResponseEntity<List<AppointmentAvgDuration>> getAvgAppointmentDurationPerPhysician() {
+        return ResponseEntity.ok(appointmentService.getAverageDurationPerPhysician());
     }
 }

@@ -40,9 +40,14 @@ public class Appointment {
     @Column(nullable = false)
     private String status = "SCHEDULED"; // default
 
+    @Column
+    private String endTime;
+
     public void cancel() {
         this.status = "CANCELLED";
     }
+
+
 
     public void update(String newTime, LocalDate newDate, String newType) {
         this.time = newTime;

@@ -8,11 +8,10 @@ import com.example.psoft_1221432_1231479_1222100.userManagement.repository.Physi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -193,5 +192,65 @@ public class AppointmentService {
                 .toList();
     }
 
+    public List<AppointmentAgeGroupStats> getAppointmentStatsByAgeGroup() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+
+        Map<String, Long> grouped = appointments.stream()
+                .collect(Collectors.groupingBy(
+                        appt -> {
+                            Patient patient = appt.getPatient();
+                            int age = Period.between(patient.getDob(), appt.getDate()).getYears();
+
+                            if (age <= 12) return "Children (0-12)";
+                            else if (age <= 19) return "Teenagers (13-19)";
+                            else if (age <= 35) return "Young Adults (20-35)";
+                            else if (age <= 60) return "Adults (36-60)";
+                            else return "Seniors (61+)";
+                        },
+                        Collectors.counting()
+                ));
+
+        return grouped.entrySet().stream()
+                .map(entry -> new AppointmentAgeGroupStats(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<UpcomingAppointment> getUpcomingAppointments() {
+        LocalDate today = LocalDate.now();
+        List<Appointment> appts = appointmentRepository.findByStatusAndDateGreaterThanEqualOrderByDateAscTimeAsc("SCHEDULED", today);
+        return appts.stream()
+                .map(a -> new UpcomingAppointment(
+                        a.getAppointmentId(),
+                        a.getPatient().getName(),
+                        a.getPhysician().getName(),
+                        a.getDate(),
+                        a.getTime(),
+                        a.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentAvgDuration> getAverageDurationPerPhysician() {
+        // Só consultas completadas
+        List<Appointment> appointments = appointmentRepository.findAllByStatus("COMPLETED");
+
+        return appointments.stream()
+                .filter(a -> a.getTime() != null && a.getEndTime() != null)
+                .collect(Collectors.groupingBy(
+                        Appointment::getPhysician,
+                        Collectors.averagingDouble(a -> {
+                            LocalTime start = LocalTime.parse(a.getTime());
+                            LocalTime end = LocalTime.parse(a.getEndTime());
+                            return Duration.between(start, end).toMinutes();
+                        })
+                ))
+                .entrySet().stream()
+                .map(e -> new AppointmentAvgDuration(
+                        e.getKey().getId(),
+                        e.getKey().getName(),
+                        e.getValue()
+                ))
+                .collect(Collectors.toList());
+    }
 
 }

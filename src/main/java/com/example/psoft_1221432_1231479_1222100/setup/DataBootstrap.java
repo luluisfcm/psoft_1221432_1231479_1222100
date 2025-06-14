@@ -69,8 +69,9 @@ public class DataBootstrap implements CommandLineRunner {
         Patient patient1 = patientRepository.findById("PAT1").orElseThrow();
         Patient patient2 = patientRepository.findById("PAT2").orElseThrow();
 
-        createAppointment("APT1", physician1, patient1, LocalDate.now().minusDays(3), "10:00", "Check-up", "COMPLETED");
-        createAppointment("APT2", physician2, patient2, LocalDate.now().plusDays(2), "14:00", "Follow-up", "SCHEDULED");
+        createAppointment("APT1", physician1, patient1, LocalDate.now().minusDays(3), "10:00", "Check-up", "COMPLETED", "10:19");
+        createAppointment("APT2", physician1, patient1, LocalDate.now().minusDays(3), "10:20", "Check-up", "COMPLETED", "10:29");
+        createAppointment("APT3", physician2, patient2, LocalDate.now().plusDays(2), "14:00", "Follow-up", "SCHEDULED", "14:17");
     }
 
     private void createPhysician(String id, String name, Specialty specialty, String contactInfo, String workingDays, String workingHours) {
@@ -103,7 +104,7 @@ public class DataBootstrap implements CommandLineRunner {
         }
     }
 
-    private void createAppointment(String id, Physician physician, Patient patient, LocalDate date, String time, String consultationType, String status) {
+    private void createAppointment(String id, Physician physician, Patient patient, LocalDate date, String time, String consultationType, String status, String endTime) {
         if (!appointmentRepository.existsById(id)) {
             Appointment appointment = new Appointment();
             appointment.setAppointmentId(id);
@@ -113,6 +114,7 @@ public class DataBootstrap implements CommandLineRunner {
             appointment.setTime(time);
             appointment.setConsultationType(consultationType);
             appointment.setStatus(status);
+            appointment.setEndTime(endTime);
             appointmentRepository.save(appointment);
         }
     }
