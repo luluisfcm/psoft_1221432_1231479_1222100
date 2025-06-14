@@ -1,0 +1,30 @@
+@startuml
+title US12 - SD - Generate Monthly Appointment Report
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":controller:ReportController" as ReportController
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+participant ":mapper:MonthlyReportMapper" as MonthlyReportMapper
+
+activate Admin
+
+Admin -> ReportController : GET /api/admin/reports/monthly
+note right: @PreAuthorize("hasAuthority('ADMIN')")
+
+ReportController -> AppointmentService : getMonthlyReport()
+
+AppointmentService -> AppointmentRepository : countAppointmentsGroupedByMonth()
+AppointmentRepository --> AppointmentService : List<AppointmentStats>
+
+AppointmentService -> MonthlyReportMapper : toReportDTO(stats)
+MonthlyReportMapper --> AppointmentService : List<MonthlyReport>
+
+AppointmentService --> ReportController : List<MonthlyReport>
+ReportController --> Admin : 200 OK + Report
+
+deactivate Admin
+@enduml

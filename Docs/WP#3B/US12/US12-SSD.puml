@@ -1,0 +1,16 @@
+@startuml
+title US12-SSD: Generate Monthly Appointment Report
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System : GET /api/admin/reports/monthly
+System --> Admin : 200 OK + List<MonthlyReport>
+
+deactivate Admin
+@enduml
