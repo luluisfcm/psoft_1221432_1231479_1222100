@@ -1,0 +1,13 @@
+@startuml
+title US11-SSD: Get Average Appointment Duration per Physician
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+autonumber
+autoactivate on
+
+Admin -> System : GET /api/admin/appointments/average-duration
+System --> Admin : 200 OK + JSON list
+
+@enduml

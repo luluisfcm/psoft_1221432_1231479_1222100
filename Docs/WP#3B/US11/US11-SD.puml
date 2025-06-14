@@ -1,0 +1,27 @@
+@startuml
+title US11-SD: Calculate Average Appointment Duration per Physician
+
+actor "Administrator" as Admin
+participant ":controller:AppointmentApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+participant ":mapper:AppointmentMapper" as AppointmentMapper
+
+autonumber
+autoactivate on
+
+Admin -> AppointmentApi : GET /api/admin/appointments/average-duration
+note right: @PreAuthorize("hasAuthority('ADMIN')")
+
+AppointmentApi -> AppointmentService : getAverageDurationPerPhysician()
+
+AppointmentService -> AppointmentRepository : findAverageDurationGroupedByPhysician()
+AppointmentRepository --> AppointmentService : List<Physician, Duration>
+
+AppointmentService -> AppointmentMapper : toResponseList(...)
+AppointmentMapper --> AppointmentService : List<AverageDurationResponse>
+
+AppointmentService --> AppointmentApi : response
+AppointmentApi --> Admin : 200 OK
+
+@enduml

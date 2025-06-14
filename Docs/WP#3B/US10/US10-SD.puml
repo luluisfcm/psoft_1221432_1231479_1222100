@@ -1,0 +1,27 @@
+@startuml
+title US10-SD: List Upcoming Appointments
+
+actor "Administrator" as Admin
+participant ":controller:AppointmentApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repository:AppointmentRepository" as AppointmentRepository
+participant ":mapper:AppointmentMapper" as AppointmentMapper
+
+autonumber
+autoactivate on
+
+Admin -> AppointmentApi : GET /api/admin/appointments/upcoming
+note right: @PreAuthorize("hasAuthority('ADMIN')")
+
+AppointmentApi -> AppointmentService : getUpcomingAppointments()
+
+AppointmentService -> AppointmentRepository : findUpcomingOrderedByDateTime()
+AppointmentRepository --> AppointmentService : List<Appointment>
+
+AppointmentService -> AppointmentMapper : toViewList(appointments)
+AppointmentMapper --> AppointmentService : List<AppointmentViewResponse>
+
+AppointmentService --> AppointmentApi : appointmentViewList
+AppointmentApi --> Admin : 200 OK + JSON
+
+@enduml

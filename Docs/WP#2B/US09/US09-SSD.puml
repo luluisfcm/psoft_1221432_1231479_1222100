@@ -1,0 +1,15 @@
+@startuml
+title US09 - SSD - Get Appointment Stats by Age Group
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System: GET /api/admin/appointments/admin/stats/appointments-by-age-group
+System --> Admin: 200 OK (List<AppointmentAgeGroupStats>)
+
+@enduml

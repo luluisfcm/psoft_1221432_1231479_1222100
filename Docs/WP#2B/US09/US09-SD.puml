@@ -1,0 +1,32 @@
+
+---
+
+### SD (PlantUML)
+
+```puml
+@startuml
+title US09 - SD - Get Appointment Stats by Age Group
+
+autoactivate on
+autonumber
+
+actor "Administrator"
+participant ":controller:AppointmentApi" as AppointmentApi
+participant ":service:AppointmentService" as AppointmentService
+participant ":repo:AppointmentRepository" as AppointmentRepository
+
+activate Administrator
+
+Administrator -> AppointmentApi : GET /api/admin/appointments/admin/stats/appointments-by-age-group
+note right: @PreAuthorize("hasAuthority('ADMIN')")
+
+AppointmentApi -> AppointmentService : getAppointmentStatsByAgeGroup()
+
+AppointmentService -> AppointmentRepository : findAll()
+AppointmentRepository --> AppointmentService : List<Appointment>
+
+AppointmentService --> AppointmentApi : List<AppointmentAgeGroupStats>
+AppointmentApi --> Administrator : 200 OK
+
+deactivate Administrator
+@enduml

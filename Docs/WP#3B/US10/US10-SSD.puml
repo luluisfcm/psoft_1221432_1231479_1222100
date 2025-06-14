@@ -1,0 +1,13 @@
+@startuml
+title US10-SSD: List Upcoming Appointments
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+autonumber
+autoactivate on
+
+Admin -> System : GET /api/admin/appointments/upcoming
+System --> Admin : 200 OK + ordered appointment list
+
+@enduml
