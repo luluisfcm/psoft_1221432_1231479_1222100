@@ -56,7 +56,7 @@ public class PatientApi {
 
     @PutMapping("/{id}")
     public ResponseEntity<PatientDetailsResponse> updatePatient(
-//        if (!authHelper.isPatient()) {
+//        if //(!authHelper.isPatient()) {
 //            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 //        }
             @PathVariable String id,
