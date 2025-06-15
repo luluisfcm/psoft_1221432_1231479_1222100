@@ -1,0 +1,30 @@
+@startuml
+title US05 - SD - Register as a Patient with Optional Photo and Health Concerns
+
+autoactivate on
+autonumber
+
+actor "Anonymous User" as User
+participant ":controller:PatientApi" as PatientApi
+participant ":service:PatientService" as PatientService
+participant ":repo:PatientRepository" as PatientRepo
+
+activate User
+
+User -> PatientApi : POST /api/patients\nRegisterPatientRequest
+
+PatientApi -> PatientService : register(request)
+
+alt Photo is provided
+PatientService -> PatientRepo : save(Patient with photo and concerns)
+else No photo
+PatientService -> PatientRepo : save(Patient without photo)
+end
+
+PatientRepo --> PatientService : Patient (with ID)
+
+PatientService --> PatientApi : PatientIdResponse
+PatientApi --> User : 201 Created + ID
+
+deactivate User
+@enduml

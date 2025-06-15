@@ -1,0 +1,16 @@
+@startuml
+title US05-SSD: Register as a Patient with Optional Photo and Health Concerns
+
+autoactivate on
+autonumber
+
+actor "Anonymous User" as User
+participant ":RestAPI" as System
+
+activate User
+
+User -> System : POST /api/patients\nRegisterPatientRequest
+System --> User : 201 Created + patientId
+
+deactivate User
+@enduml
