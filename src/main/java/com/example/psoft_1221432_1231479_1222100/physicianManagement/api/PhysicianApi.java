@@ -3,6 +3,7 @@ package com.example.psoft_1221432_1231479_1222100.physicianManagement.api;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.dto.*;
 import com.example.psoft_1221432_1231479_1222100.physicianManagement.service.PhysicianService;
 import com.example.psoft_1221432_1231479_1222100.userManagement.model.Physician;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,12 +31,28 @@ public class PhysicianApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PhysicianIdResponse.class))),
             @ApiResponse(responseCode = "400", description = "Pedido inválido", content = @Content)
     })
-    @PostMapping("/register")
+    /*@PostMapping("/register")
     public ResponseEntity<PhysicianIdResponse> register(
             @RequestBody @Valid RegisterPhysicianRequest request) {
         PhysicianIdResponse response = physicianService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }*/
+    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
+    public ResponseEntity<PhysicianIdResponse> register(
+            @RequestPart("data") String data,
+            @RequestPart(value = "photo", required = false) MultipartFile photoFile) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            RegisterPhysicianRequest request = mapper.readValue(data, RegisterPhysicianRequest.class);
+            PhysicianIdResponse response = physicianService.register(request, photoFile);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Physician> updatePhysician(
@@ -44,17 +61,4 @@ public class PhysicianApi {
         Physician updated = physicianService.updatePhysician(id, request);
         return ResponseEntity.ok(updated);
     }
-
-    /*@PostMapping("/{id}/photo")
-    public ResponseEntity<?> uploadPhoto(@PathVariable String id, @RequestParam("photo") MultipartFile photoFile) {
-        physicianService.uploadPhoto(id, photoFile);
-        return ResponseEntity.ok().build();
-    }
-    @PostMapping("/register-base64")
-    public ResponseEntity<Physician> registerWithPhotoBase64(
-            @RequestBody RegisterPhysicianBase64DTO dto) {
-        Physician physician = physicianService.registerWithPhotoBase64(dto);
-        return ResponseEntity.ok(physician);
-    }*/
-
 }

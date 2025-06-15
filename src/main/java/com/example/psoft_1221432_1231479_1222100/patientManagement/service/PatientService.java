@@ -10,9 +10,13 @@ import com.example.psoft_1221432_1231479_1222100.userManagement.repository.Appoi
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PatientRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PhysicianRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -30,11 +34,58 @@ public class PatientService {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Value("${profile.photos.dir:profile_photos}")
+    private String photosDir;
 
-    public PatientIdResponse register(RegisterPatientRequest request) {
+
+//    public PatientIdResponse register(RegisterPatientRequest request) {
+//        if (patientRepository.existsByEmail(request.getEmail())) {
+//            throw new IllegalArgumentException("Patient with this email already exists.");
+//        }
+//
+//        Patient patient = new Patient(
+//                UUID.randomUUID().toString(),
+//                request.getName(),
+//                request.getEmail(),
+//                request.getMorada(),
+//                request.getDob(),
+//                request.getPhone(),
+//                request.getInsuranceInfo(),
+//                request.getHealthConcerns(),
+//                request.getPhoto(),
+//                request.isDataConsent()
+//        );
+//
+//        Patient saved = patientRepository.save(patient);
+//
+//        return PatientIdResponse.builder()
+//                .id(saved.getId())
+//                .name(saved.getName())
+//                .build();
+//    }
+
+    public PatientIdResponse register(RegisterPatientRequest request, MultipartFile photoFile) {
         if (patientRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Patient with this email already exists.");
         }
+
+        String photoUrl = null;
+        if (photoFile != null && !photoFile.isEmpty()) {
+            try {
+                File dir = new File(photosDir);
+                if (!dir.exists()) dir.mkdirs();
+                String fileName = UUID.randomUUID() + "_" + photoFile.getOriginalFilename();
+                File dest = new File(dir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(dest)) {
+                    fos.write(photoFile.getBytes());
+                }
+                photoUrl = "/" + photosDir + "/" + fileName;
+            } catch (Exception e) {
+                throw new RuntimeException("Could not save profile photo", e);
+            }
+        }
+
+        // Para healthConcerns: já tens um campo no DTO (string), mas podes trocar para List<String> se preferires.
 
         Patient patient = new Patient(
                 UUID.randomUUID().toString(),
@@ -45,7 +96,7 @@ public class PatientService {
                 request.getPhone(),
                 request.getInsuranceInfo(),
                 request.getHealthConcerns(),
-                request.getPhoto(),
+                photoUrl,    // Atualizado!
                 request.isDataConsent()
         );
 
@@ -56,6 +107,7 @@ public class PatientService {
                 .name(saved.getName())
                 .build();
     }
+
 
     public PatientDetailsResponse getById(String id) {
         Patient patient = patientRepository.findById(id)

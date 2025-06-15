@@ -33,7 +33,7 @@ public class Physician {
     private String workingHours;
 
     @Column
-    private String profilePhotoPath;
+    private String photoUrl;
 
     public Physician(String id, String firstName, String contactInfo, String workingDays, String workingHours) {
         this.id = id;

@@ -8,6 +8,7 @@ import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.RegisterP
 import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.PatientIdResponse;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.dto.UpdatePatientRequest;
 import com.example.psoft_1221432_1231479_1222100.patientManagement.service.PatientService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,11 +37,27 @@ public class PatientApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PatientIdResponse.class))),
             @ApiResponse(responseCode = "400", description = "Pedido inválido", content = @Content)
     })
-    @PostMapping("/register")
+//    @PostMapping("/register")
+//    public ResponseEntity<PatientIdResponse> registerPatient(
+//            @RequestBody @Valid RegisterPatientRequest request) {
+//        PatientIdResponse response = patientService.register(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
+    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<PatientIdResponse> registerPatient(
-            @RequestBody @Valid RegisterPatientRequest request) {
-        PatientIdResponse response = patientService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            @RequestPart("data") String data,
+            @RequestPart(value = "photo", required = false) MultipartFile photoFile) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            RegisterPatientRequest request = mapper.readValue(data, RegisterPatientRequest.class);
+
+            // Passa o MultipartFile para o service (ou trata aqui)
+            PatientIdResponse response = patientService.register(request, photoFile);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @Operation(summary = "Obter detalhes de paciente", description = "Devolve os dados completos de um paciente através do seu ID.")

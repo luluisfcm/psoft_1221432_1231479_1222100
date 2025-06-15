@@ -36,7 +36,7 @@ public class PhysicianService {
     private final SpecialtyRepository specialtyRepository;
     @Autowired
     private AppointmentRepository appointmentRepository; //
-    public PhysicianIdResponse register(RegisterPhysicianRequest request) {
+    /*public PhysicianIdResponse register(RegisterPhysicianRequest request) {
         Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
 
@@ -54,7 +54,47 @@ public class PhysicianService {
                 .id(saved.getId())
                 .name(saved.getName())
                 .build();
+    }*/
+
+    public PhysicianIdResponse register(RegisterPhysicianRequest request, MultipartFile photoFile) {
+        Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+
+        Physician physician = new Physician();
+        physician.setId(UUID.randomUUID().toString());
+        physician.setName(request.getName());
+        physician.setSpecialty(specialty);
+        physician.setContactInfo(request.getContactInfo());
+        physician.setWorkingHours(request.getWorkingHours());
+        physician.setWorkingDays(request.getWorkingDays());
+
+        // NOVO: Lidar com a foto
+        if (photoFile != null && !photoFile.isEmpty()) {
+            try {
+                File dir = new File(photosDir);
+                if (!dir.exists()) dir.mkdirs();
+                String fileName = UUID.randomUUID() + "_" + photoFile.getOriginalFilename();
+                File dest = new File(dir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(dest)) {
+                    fos.write(photoFile.getBytes());
+                }
+                // Define o caminho (pode ser URL se servir arquivos estaticamente)
+                physician.setPhotoUrl("/" + photosDir + "/" + fileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Erro ao salvar a foto de perfil", e);
+            }
+        } else {
+            physician.setPhotoUrl(null);
+        }
+
+        Physician saved = physicianRepository.save(physician);
+
+        return PhysicianIdResponse.builder()
+                .id(saved.getId())
+                .name(saved.getName())
+                .build();
     }
+
 
     public Object getByIdForRole(String id, Role role) {
         Physician physician = physicianRepository.findById(id)
@@ -191,56 +231,4 @@ public class PhysicianService {
 
         return days;
     }
-
-//    public void uploadPhoto(String physicianId, MultipartFile photoFile) {
-//        Physician physician = physicianRepository.findById(physicianId)
-//                .orElseThrow(() -> new RuntimeException("Physician not found"));
-//
-//        String fileName = "physician-" + System.currentTimeMillis() + "-" + photoFile.getOriginalFilename();
-//        File dest = new File("profile_photos", fileName);
-//        dest.getParentFile().mkdirs();
-//        try {
-//            photoFile.transferTo(dest);
-//            physician.setProfilePhotoPath(dest.getAbsolutePath());
-//            physicianRepository.save(physician);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Erro ao guardar foto de perfil", e);
-//        }
-//    }
-//    public Physician registerWithPhotoBase64(RegisterPhysicianBase64DTO dto) {
-//        Physician physician = new Physician();
-//        physician.setId(UUID.randomUUID().toString());
-//        physician.setName(dto.getName());
-//        physician.setSpecialty(dto.getSpecialtyId());
-//        physician.setContactInfo(dto.getContactInfo());
-//        physician.setWorkingHours(dto.getWorkingHours());
-//        physician.setWorkingDays(dto.getWorkingDays());
-//
-//        if (dto.getPhotoBase64() != null && !dto.getPhotoBase64().isEmpty()) {
-//            try {
-//                // Limpa o prefixo se vier (data:image/png;base64,)
-//                String base64 = dto.getPhotoBase64();
-//                if (base64.contains(",")) {
-//                    base64 = base64.substring(base64.indexOf(",") + 1);
-//                }
-//                byte[] decoded = Base64.getDecoder().decode(base64);
-//                String fileName = "physician-" + System.currentTimeMillis() + ".jpg";
-//                File dest = new File("profile_photos", fileName);
-//                dest.getParentFile().mkdirs();
-//                try (FileOutputStream fos = new FileOutputStream(dest)) {
-//                    fos.write(decoded);
-//                }
-//                physician.setProfilePhotoPath(dest.getAbsolutePath());
-//            } catch (Exception e) {
-//                throw new RuntimeException("Erro ao guardar foto Base64", e);
-//            }
-//        } else {
-//            // Usa placeholder se não vier foto
-//            File defaultFile = new File("profile_photos", "placeholder.jpg");
-//            physician.setProfilePhotoPath(defaultFile.getAbsolutePath());
-//        }
-//
-//        return physicianRepository.save(physician);
-//    }
-
 }

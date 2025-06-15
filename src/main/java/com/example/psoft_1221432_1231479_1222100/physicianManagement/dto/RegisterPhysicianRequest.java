@@ -16,4 +16,5 @@ public class RegisterPhysicianRequest {
     private String contactInfo;
     private String workingHours;
     private String workingDays;
+    private String photoUrl;
 }
