@@ -45,7 +45,7 @@ public class PhysicianApi {
         return ResponseEntity.ok(updated);
     }
 
-    @PostMapping("/{id}/photo")
+    /*@PostMapping("/{id}/photo")
     public ResponseEntity<?> uploadPhoto(@PathVariable String id, @RequestParam("photo") MultipartFile photoFile) {
         physicianService.uploadPhoto(id, photoFile);
         return ResponseEntity.ok().build();
@@ -55,6 +55,6 @@ public class PhysicianApi {
             @RequestBody RegisterPhysicianBase64DTO dto) {
         Physician physician = physicianService.registerWithPhotoBase64(dto);
         return ResponseEntity.ok(physician);
-    }
+    }*/
 
 }
