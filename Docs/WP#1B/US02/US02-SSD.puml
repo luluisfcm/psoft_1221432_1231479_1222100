@@ -1,0 +1,16 @@
+@startuml
+title US02-SSD: Register a Physician with Optional Profile Photo
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":RestAPI" as System
+
+activate Admin
+
+Admin -> System : POST /api/physicians
+System --> Admin : 201 Created + physicianId
+
+deactivate Admin
+@enduml

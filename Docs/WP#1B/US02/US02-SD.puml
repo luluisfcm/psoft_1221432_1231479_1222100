@@ -1,0 +1,42 @@
+@startuml
+title US02 - SD - Register a Physician with Optional Profile Photo
+
+autoactivate on
+autonumber
+
+actor "Administrator" as Admin
+participant ":controller:PhysicianApi" as PhysicianApi
+participant ":service:PhysicianService" as PhysicianService
+participant ":repo:DepartmentRepository" as DepartmentRepo
+participant ":repo:SpecialtyRepository" as SpecialtyRepo
+participant ":repo:PhysicianRepository" as PhysicianRepo
+participant ":repo:UserRepository" as UserRepo
+
+activate Admin
+
+Admin -> PhysicianApi : POST /api/physicians\nRegisterPhysicianRequest
+note right: Secured with role ADMIN
+
+PhysicianApi -> PhysicianService : register(request)
+
+PhysicianService -> DepartmentRepo : findById(request.departmentId)
+DepartmentRepo --> PhysicianService : Department
+
+PhysicianService -> SpecialtyRepo : findById(request.specialtyId)
+SpecialtyRepo --> PhysicianService : Specialty
+
+PhysicianService -> UserRepo : save(User)
+UserRepo --> PhysicianService : User
+
+alt photo is present
+PhysicianService -> PhysicianRepo : save(Physician with photo)
+else photo is not present
+PhysicianService -> PhysicianRepo : save(Physician without photo)
+end
+PhysicianRepo --> PhysicianService : Physician (with ID)
+
+PhysicianService --> PhysicianApi : PhysicianIdResponse
+PhysicianApi --> Admin : 201 Created + ID
+
+deactivate Admin
+@enduml
