@@ -19,7 +19,7 @@ public class RegisterPatientRequest {
     private String morada;
 
     @NotNull
-    private LocalDate dob;
+    private String dob;
 
     private String phone;
     private String insuranceInfo;

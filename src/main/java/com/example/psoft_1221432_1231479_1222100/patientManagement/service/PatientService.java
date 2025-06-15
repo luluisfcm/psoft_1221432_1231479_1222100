@@ -10,14 +10,15 @@ import com.example.psoft_1221432_1231479_1222100.userManagement.repository.Appoi
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PatientRepository;
 import com.example.psoft_1221432_1231479_1222100.userManagement.repository.PhysicianRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +34,6 @@ public class PatientService {
     private PhysicianRepository physicianRepository;
     @Autowired
     private AppointmentRepository appointmentRepository;
-
     @Value("${profile.photos.dir:profile_photos}")
     private String photosDir;
 
@@ -72,31 +72,30 @@ public class PatientService {
         String photoUrl = null;
         if (photoFile != null && !photoFile.isEmpty()) {
             try {
-                File dir = new File(photosDir);
+                File dir = new File("profile_photos");
                 if (!dir.exists()) dir.mkdirs();
                 String fileName = UUID.randomUUID() + "_" + photoFile.getOriginalFilename();
                 File dest = new File(dir, fileName);
                 try (FileOutputStream fos = new FileOutputStream(dest)) {
                     fos.write(photoFile.getBytes());
                 }
-                photoUrl = "/" + photosDir + "/" + fileName;
+                photoUrl = "/profile_photos/" + fileName;
             } catch (Exception e) {
-                throw new RuntimeException("Could not save profile photo", e);
+                throw new RuntimeException("Erro ao salvar foto", e);
             }
         }
 
-        // Para healthConcerns: já tens um campo no DTO (string), mas podes trocar para List<String> se preferires.
-
+        LocalDate dob = LocalDate.parse(request.getDob());
         Patient patient = new Patient(
                 UUID.randomUUID().toString(),
                 request.getName(),
                 request.getEmail(),
                 request.getMorada(),
-                request.getDob(),
+                dob,
                 request.getPhone(),
                 request.getInsuranceInfo(),
                 request.getHealthConcerns(),
-                photoUrl,    // Atualizado!
+                photoUrl,
                 request.isDataConsent()
         );
 
@@ -107,6 +106,7 @@ public class PatientService {
                 .name(saved.getName())
                 .build();
     }
+
 
 
     public PatientDetailsResponse getById(String id) {

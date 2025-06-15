@@ -43,6 +43,7 @@ public class PatientApi {
 //        PatientIdResponse response = patientService.register(request);
 //        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 //    }
+
     @PostMapping(value = "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<PatientIdResponse> registerPatient(
             @RequestPart("data") String data,
@@ -51,7 +52,9 @@ public class PatientApi {
             ObjectMapper mapper = new ObjectMapper();
             RegisterPatientRequest request = mapper.readValue(data, RegisterPatientRequest.class);
 
-            // Passa o MultipartFile para o service (ou trata aqui)
+            // DEBUG: Mostra no log o que foi lido
+            System.out.println("REGISTO: " + request.getName() + " | " + request.getEmail() + " | " + request.getDob());
+
             PatientIdResponse response = patientService.register(request, photoFile);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
@@ -59,6 +62,7 @@ public class PatientApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
 
     @Operation(summary = "Obter detalhes de paciente", description = "Devolve os dados completos de um paciente através do seu ID.")
     @ApiResponses(value = {
