@@ -63,9 +63,9 @@ public class PhysicianQueryApi {
     }
     @GetMapping("/{physicianId}/available-slots")
     public ResponseEntity<AvailableSlotResponse> getAvailableSlots(@PathVariable String physicianId) {
-//        if (!authHelper.isPatient()) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
+        if (!authHelper.isPatient()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+       }
         return ResponseEntity.ok(physicianService.getAvailableSlots(physicianId));
     }
 }
