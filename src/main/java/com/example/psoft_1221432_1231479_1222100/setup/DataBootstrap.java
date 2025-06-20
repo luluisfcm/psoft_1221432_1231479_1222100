@@ -53,8 +53,8 @@ public class DataBootstrap implements CommandLineRunner {
         Specialty cardiology = specialtyRepository.findByName("Cardiology").orElseThrow();
         Specialty pediatrics = specialtyRepository.findByName("Pediatrics").orElseThrow();
 
-        createPhysician("DOC1", "Dr. João Carvalho", cardiology, "joao@hospital.com", "Mon-Fri", "08:00-16:00");
-        createPhysician("DOC2", "Dr. Pedro Pereira", pediatrics, "pedro@hospital.com", "Tue-Sat", "10:00-18:00");
+        createPhysician("DOC1", "Dr. João Carvalho", cardiology, "joao@hospital.com", "MON-FRI", "08:00-16:00");
+        createPhysician("DOC2", "Dr. Pedro Pereira", pediatrics, "pedro@hospital.com", "SAT-SUN", "10:00-18:00");
     }
 
     private void preloadPatients() {

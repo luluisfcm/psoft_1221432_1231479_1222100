@@ -44,7 +44,7 @@ public class PatientApi {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 //    }
 
-    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
+        @PostMapping(value = "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<PatientIdResponse> registerPatient(
             @RequestPart("data") String data,
             @RequestPart(value = "photo", required = false) MultipartFile photoFile) {
